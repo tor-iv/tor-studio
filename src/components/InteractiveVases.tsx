@@ -1,10 +1,9 @@
-'use client'
-
-import VaseItem from '@/components/VaseItem'
-import ShelfVase from '@/components/ShelfVase'
-import ShelfVase4 from '@/components/ShelfVase4'
-import ShelfLine from '@/components/ShelfLine'
-import { vaseData } from '@/lib/vase-data'
+import VaseItem from './VaseItem'
+import ShelfVase from './ShelfVase'
+import ShelfVase4 from './ShelfVase4'
+import ShelfLine from './ShelfLine'
+import TableEdgeLine from './TableEdgeLine'
+import { vaseData } from '../lib/vase-data'
 
 export default function InteractiveVases() {
   const handleVaseClick = (vaseId: string) => {
@@ -27,6 +26,9 @@ export default function InteractiveVases() {
 
   return (
     <ShelfLine>
+      {/* Table edge line - back inside container with absolute positioning */}
+      <TableEdgeLine />
+
       {/* Shelf vase on central table */}
       <ShelfVase onVaseClick={handleShelfVaseClick} />
 

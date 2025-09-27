@@ -4,35 +4,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is "TORS-BORED STUDIO" - a Next.js interactive portfolio project that recreates a pottery studio design. The project transforms design assets into an interactive web experience with hover animations, clickable portfolio pieces, and modal interactions.
+This is "TORS-BORED STUDIO" - a Vite + React interactive portfolio project that recreates a pottery studio design. The project transforms design assets into an interactive web experience with hover animations, clickable portfolio pieces, and modal interactions.
+
+## Documentation
+
+📚 **Complete documentation is available in the `docs/` directory:**
+
+- **Learning Guides** (`docs/learning/`): React and frontend development tutorials using this codebase
+- **Project Guides** (`docs/project/`): Repository-specific development, deployment, and architecture docs
+- **Quick Start**: See `docs/README.md` for navigation and learning paths
 
 ## Technology Stack
 
-- **Framework**: Next.js 14 (App Router) with TypeScript
-- **Styling**: Tailwind CSS + CSS Modules for animations
+- **Framework**: Vite + React 19 with TypeScript
+- **Styling**: Tailwind CSS + CSS-in-JS for dynamic styles
 - **Animations**: Framer Motion + CSS Transitions
-- **Deployment**: Vercel with custom domain
-- **PWA**: next-pwa plugin for offline functionality
+- **Deployment**: GitHub Pages with PWA support
+- **PWA**: vite-plugin-pwa for offline functionality
 - **Icons**: React Icons for contact links
 
 ## Project Structure
 
 ```
 tors-studio/
-├── src/app/                    # Next.js App Router pages
-├── src/components/             # React components
-│   ├── Studio.tsx             # Main studio container
-│   ├── VaseItem.tsx           # Individual vase component
-│   ├── AboutSign.tsx          # Animated about sign
-│   ├── ProjectModal.tsx       # Project detail modal
-│   ├── AboutModal.tsx         # About me modal
-│   └── ContactSection.tsx     # Contact links
-├── src/lib/                   # Utilities and data
-│   ├── vase-data.ts          # Vase positioning and project info
-│   └── types.ts              # TypeScript interfaces
-├── public/images/            # All design assets
-├── PROJECT_PLAN.md           # Complete project architecture
-└── IMPLEMENTATION_STEPS.md   # 30 detailed execution steps
+├── src/
+│   ├── components/           # React components
+│   │   ├── Studio.tsx       # Main studio container
+│   │   ├── VaseItem.tsx     # Individual vase component
+│   │   ├── StudioTitle.tsx  # Fixed title component
+│   │   ├── InteractiveVases.tsx # Vase orchestration
+│   │   ├── ShelfVase.tsx    # Positioned vase components
+│   │   └── TableEdgeLine.tsx # SVG table visualization
+│   ├── hooks/               # Custom React hooks
+│   │   ├── usePanning.ts    # Edge-based panning logic
+│   │   └── useResponsiveDesign.ts # Responsive breakpoints
+│   ├── lib/                 # Utilities and data
+│   │   ├── vase-data.ts    # Vase positioning and project info
+│   │   └── types.ts        # TypeScript interfaces
+│   └── styles/             # Global styles
+├── public/images/          # All design assets
+├── docs/                   # Complete documentation
+│   ├── learning/          # React/frontend learning guides
+│   └── project/           # Repository-specific guides
+├── PROJECT_PLAN.md        # Original project architecture
+└── IMPLEMENTATION_STEPS.md # Development execution steps
 ```
 
 ## Common Development Commands
@@ -92,7 +107,7 @@ The project follows a structured 6-phase development approach detailed in IMPLEM
 
 ## Deployment Configuration
 
-- **Target**: Vercel with custom domain `tors-iv-portfolio.vercel.app`
+- **Target**: GitHub Pages with base path `/tors-studio/`
 - **PWA**: Offline functionality with service worker
 - **Performance**: <3s load time, >90 Lighthouse score target
 

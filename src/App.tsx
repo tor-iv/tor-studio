@@ -1,8 +1,8 @@
-import Studio from '@/components/Studio'
-import StudioTitle from '@/components/StudioTitle'
-import InteractiveVases from '@/components/InteractiveVases'
+import Studio from './components/Studio'
+import StudioTitle from './components/StudioTitle'
+import InteractiveVases from './components/InteractiveVases'
 
-export default function Home() {
+export default function App() {
   return (
     <main>
       {/* Fixed title that doesn't pan with the background */}

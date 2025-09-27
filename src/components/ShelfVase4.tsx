@@ -1,6 +1,3 @@
-'use client'
-
-import Image from 'next/image'
 import { useState } from 'react'
 
 interface ShelfVase4Props {
@@ -49,12 +46,10 @@ export default function ShelfVase4({ onVaseClick }: ShelfVase4Props) {
       />
 
       {/* Vase4 Image with natural blending */}
-      <Image
-        src="/images/vase4.jpeg"
+      <img
+        src="images/vase4.jpeg"
         alt="Pottery piece vase4 on shelf"
-        fill
-        sizes="(max-width: 768px) 15vw, (max-width: 1024px) 12vw, 10vw"
-        className="object-contain transition-all duration-300"
+        className="absolute inset-0 w-full h-full object-contain transition-all duration-300"
         style={{
           filter: isHovered
             ? 'brightness(1.15) contrast(1.05) sepia(0.15) saturate(1.1) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4))'

@@ -1,6 +1,3 @@
-'use client'
-
-import Image from 'next/image'
 import { ReactNode } from 'react'
 
 interface StudioProps {
@@ -12,14 +9,10 @@ export default function Studio({ children }: StudioProps) {
     <div className="relative w-full h-screen overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full">
-        <Image
-          src="/images/background.jpeg"
+        <img
+          src="images/background.jpeg"
           alt="Pottery studio background"
-          fill
-          priority
-          quality={90}
-          className="object-cover"
-          sizes="100vw"
+          className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
 

@@ -1,6 +1,4 @@
-'use client'
-
-import { useResponsiveDesign } from '@/hooks/useResponsiveDesign'
+import { useResponsiveDesign } from '../hooks/useResponsiveDesign'
 
 interface ShelfLineProps {
   children: React.ReactNode
@@ -11,7 +9,7 @@ export default function ShelfLine({ children }: ShelfLineProps) {
 
   // Calculate the shelf line position based on the middle table surface
   // This creates a horizontal reference line that all shelf items will align to
-  const shelfLinePosition = 45 // Percentage from top where the shelf line sits
+  const shelfLinePosition = 5 // Percentage from top where the shelf line sits
 
   // Calculate scaling factor to maintain proportions
   const scalingFactor = Math.min(screenWidth / 1536, screenHeight / 1024)

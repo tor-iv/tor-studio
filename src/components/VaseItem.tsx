@@ -1,9 +1,6 @@
-'use client'
-
-import Image from 'next/image'
 import { useState } from 'react'
-import { VaseData } from '@/lib/types'
-import { useResponsiveDesign, getResponsiveFontSize } from '@/hooks/useResponsiveDesign'
+import { VaseData } from '../lib/types'
+import { useResponsiveDesign, getResponsiveFontSize } from '../hooks/useResponsiveDesign'
 
 interface VaseItemProps {
   vaseData: VaseData
@@ -46,11 +43,10 @@ export default function VaseItem({ vaseData, onClick }: VaseItemProps) {
       onClick={handleClick}
     >
       {/* Vase Image */}
-      <Image
+      <img
         src={image}
         alt={project.title}
-        fill
-        className={`object-contain transition-all duration-300 ${
+        className={`w-full h-full object-contain transition-all duration-300 ${
           isHovered ? 'brightness-110 drop-shadow-lg' : 'drop-shadow-md'
         }`}
         style={{
