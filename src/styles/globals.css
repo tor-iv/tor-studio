@@ -2,50 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --studio-bg: #f8f6f0;
-  --pottery-brown: #8b4513;
-}
-
 * {
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  overflow-x: hidden;
+html, body {
   margin: 0;
   padding: 0;
 }
 
-/* Responsive vase positioning enhancements */
-.vase-container {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Ensure touch interactions work well on mobile */
-@media (max-width: 768px) {
-  .vase-container {
-    transform-origin: center center;
-  }
-
-  .vase-container:hover {
-    transform-origin: center center;
-  }
-}
-
-/* Improve text readability in overlays at different scales */
-.vase-overlay {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-/* Smooth scaling animations */
-@media (prefers-reduced-motion: no-preference) {
-  .vase-container {
-    will-change: transform;
-  }
+body {
+  min-width: 100vw;
+  min-height: 100vh;
 }

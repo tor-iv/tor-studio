@@ -1,31 +1,42 @@
-import { useResponsiveDesign } from '../hooks/useResponsiveDesign'
-
 interface ShelfLineProps {
-  children: React.ReactNode
+  top: string
+  left: string
+  width: string
+  angle?: number
+  visible?: boolean
+  shelfId?: string
 }
 
-export default function ShelfLine({ children }: ShelfLineProps) {
-  const { screenWidth, screenHeight } = useResponsiveDesign()
-
-  // Calculate the shelf line position based on the middle table surface
-  // This creates a horizontal reference line that all shelf items will align to
-  const shelfLinePosition = 5 // Percentage from top where the shelf line sits
-
-  // Calculate scaling factor to maintain proportions
-  const scalingFactor = Math.min(screenWidth / 1536, screenHeight / 1024)
+export default function ShelfLine({
+  top,
+  left,
+  width,
+  angle = 0,
+  visible = true,
+  shelfId
+}: ShelfLineProps) {
+  console.log('ShelfLine rendering:', { top, left, width, visible, shelfId })
 
   return (
-    <div className="relative w-full h-full">
-      {/* Shelf constraint container */}
-      <div
-        className="relative w-full h-full"
-        style={{
-          '--shelf-line-position': `${shelfLinePosition}%`,
-          '--scaling-factor': scalingFactor,
-        } as React.CSSProperties}
-      >
-        {children}
-      </div>
+    <div
+      className="absolute bg-red-500"
+      style={{
+        top,
+        left,
+        width,
+        height: '20px',
+        backgroundColor: '#ff0000',
+        zIndex: 30,
+        border: '2px solid black',
+        fontSize: '12px',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        paddingLeft: '8px'
+      }}
+      data-shelf-id={shelfId}
+    >
+      {shelfId}
     </div>
   )
 }
