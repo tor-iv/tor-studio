@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tors‑Bored Studio — Interactive Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
   <style>
     /* Page frame */
     html, body { height: 100%; margin: 0; }
@@ -50,6 +53,36 @@
     .bubble .title { font-weight: 700; }
     .bubble .body { font-size: 16px; }
 
+    /* Foreign object bubble content styling */
+    .bubble-content {
+      font-family: "Caveat", cursive;
+      color: #1b1b1b;
+      text-align: center;
+      padding: 8px 12px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      box-sizing: border-box;
+    }
+    .bubble-content .title {
+      font-family: "Caveat Brush", cursive;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 1.2;
+      word-wrap: break-word;
+    }
+    .bubble-content .body {
+      font-family: "Caveat", cursive;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
+      font-size: 18px;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+
     /* Accessibility helper for keyboard focus */
     .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; border: 0; padding: 0; clip: rect(0 0 0 0); overflow: hidden; }
   </style>
@@ -95,15 +128,50 @@
 
     <!-- ===== VASES (each inside a focusable <g>) ===== -->
 
-    <!-- Helper: bubble template will be cloned/positioned via JS per vase -->
+    <!-- Helper: bubble templates will be cloned/positioned via JS per vase -->
+    <!-- Default bubble template (tail pointing down) -->
     <g id="bubble-template" class="bubble" opacity="0.98">
       <!-- rect background -->
-      <rect x="-130" y="-90" width="260" height="100" rx="14" ry="14" fill="#fcfbf7" filter="url(#bubble-shadow)"/>
+      <rect x="-130" y="-90" width="260" height="100" rx="14" ry="14" fill="#faf6f0" filter="url(#bubble-shadow)"/>
       <!-- tail (triangle-ish) pointing downward by default -->
-      <path d="M 0 10 L -10 0 L 10 0 Z" fill="#fcfbf7"/>
-      <!-- text blocks (positioned inside rect) -->
-      <text class="title" text-anchor="middle" x="0" y="-55">Title</text>
-      <text class="body" text-anchor="middle" x="0" y="-30">Body</text>
+      <path d="M 0 10 L -10 0 L 10 0 Z" fill="#faf6f0"/>
+      <!-- text blocks using foreignObject for text wrapping -->
+      <foreignObject x="-120" y="-85" width="240" height="90">
+        <div class="bubble-content" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="title">Title</div>
+          <div class="body">Body</div>
+        </div>
+      </foreignObject>
+    </g>
+
+    <!-- Left bubble template (tail pointing right) -->
+    <g id="bubble-template-left" class="bubble" opacity="0.98">
+      <!-- rect background -->
+      <rect x="-260" y="-50" width="260" height="100" rx="14" ry="14" fill="#faf6f0" filter="url(#bubble-shadow)"/>
+      <!-- tail pointing right -->
+      <path d="M 0 0 L -10 -10 L -10 10 Z" fill="#faf6f0"/>
+      <!-- text blocks using foreignObject for text wrapping -->
+      <foreignObject x="-250" y="-45" width="240" height="90">
+        <div class="bubble-content" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="title">Title</div>
+          <div class="body">Body</div>
+        </div>
+      </foreignObject>
+    </g>
+
+    <!-- Right bubble template (tail pointing left) -->
+    <g id="bubble-template-right" class="bubble" opacity="0.98">
+      <!-- rect background -->
+      <rect x="0" y="-50" width="260" height="100" rx="14" ry="14" fill="#faf6f0" filter="url(#bubble-shadow)"/>
+      <!-- tail pointing left -->
+      <path d="M 0 0 L 10 -10 L 10 10 Z" fill="#faf6f0"/>
+      <!-- text blocks using foreignObject for text wrapping -->
+      <foreignObject x="10" y="-45" width="240" height="90">
+        <div class="bubble-content" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="title">Title</div>
+          <div class="body">Body</div>
+        </div>
+      </foreignObject>
     </g>
 
     <!-- Green Spiral Vase -->
@@ -118,7 +186,8 @@
     <g id="vase-owl" class="vase" tabindex="0" role="button" aria-label="Owl Vase" aria-expanded="false"
        data-title="Owl Vase (Fnoobie)"
        data-body="Textured stoneware, butter glaze; cozy night light."
-       data-bubble-offset="56">
+       data-bubble-offset="56"
+       data-bubble-position="left">
       <image href="images/fnoobie.png" x="1351" y="525" width="126" height="189" transform="rotate(5 1414 613.5)"/>
     </g>
 
@@ -127,7 +196,7 @@
        data-title="Tomato Jar"
        data-body="Hand-built lidded jar; glossy red slip with green knob."
        data-bubble-offset="72">
-      <image href="images/tomato.png" x="791" y="555" width="157" height="157"/>
+      <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
     </g>
 
     <!-- White Tall Ribbed -->
@@ -150,8 +219,9 @@
     <g id="vase-flower" class="vase" tabindex="0" role="button" aria-label="Flower Vase" aria-expanded="false"
        data-title="Flower Vase"
        data-body="Soft blossoms over matte ivory; spring in a vessel."
-       data-bubble-offset="56">
-      <image href="images/white-flower.png" x="30.9" y="512" width="94" height="141" transform="rotate(-6 74.9 577.97)"/>
+       data-bubble-offset="56"
+       data-bubble-position="right">
+      <image href="images/white-flower.png" x="30.9" y="515" width="90" height="139" transform="rotate(-6 74.9 577.97)"/>
     </g>
 
   </svg>
@@ -161,16 +231,32 @@
       const svg = document.getElementById('scene');
       const groups = Array.from(svg.querySelectorAll('.vase'));
       const template = svg.getElementById('bubble-template');
+      const templateLeft = svg.getElementById('bubble-template-left');
+      const templateRight = svg.getElementById('bubble-template-right');
 
       let openBubble = null; // enforce single-bubble rule
 
       function placeBubbleForGroup(g) {
         // Remove existing bubble if any
         const old = g.querySelector('.bubble');
-        if (old && old !== template) old.remove();
+        if (old && old !== template && old !== templateLeft && old !== templateRight) old.remove();
 
-        // Clone template and inject content
-        const b = template.cloneNode(true);
+        // Determine which template to use based on bubble position
+        const position = g.dataset.bubblePosition || 'top';
+        let templateToUse;
+        switch(position) {
+          case 'left':
+            templateToUse = templateLeft;
+            break;
+          case 'right':
+            templateToUse = templateRight;
+            break;
+          default:
+            templateToUse = template;
+        }
+
+        // Clone appropriate template and inject content
+        const b = templateToUse.cloneNode(true);
         b.id = '';
         b.classList.add('open');
 
@@ -179,13 +265,29 @@
         b.querySelector('.title').textContent = title;
         b.querySelector('.body').textContent = body;
 
-        // Compute anchor: top-center of the group's bounding box in SVG units
+        // Compute anchor based on position
         const bbox = g.getBBox();
         const offset = parseFloat(g.dataset.bubbleOffset || '56');
-        const anchorX = bbox.x + bbox.width / 2;
-        const anchorY = bbox.y - offset; // above
+        let anchorX, anchorY;
 
-        // Position by translating the whole bubble group so its tail sits above the vase
+        switch(position) {
+          case 'left':
+            // Position to the left of the vase
+            anchorX = bbox.x - 20;
+            anchorY = bbox.y + bbox.height / 2;
+            break;
+          case 'right':
+            // Position to the right of the vase
+            anchorX = bbox.x + bbox.width + 20;
+            anchorY = bbox.y + bbox.height / 2;
+            break;
+          default:
+            // Default: above the vase
+            anchorX = bbox.x + bbox.width / 2;
+            anchorY = bbox.y - offset;
+        }
+
+        // Position by translating the whole bubble group
         b.setAttribute('transform', `translate(${anchorX}, ${anchorY})`);
 
         // Mark for styling/show
