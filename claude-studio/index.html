@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tors-Bored Studio - Interactive Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #8B7355;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Georgia', serif;
+            overflow-x: auto;
+        }
+
+        #gallery-container {
+            width: 100%;
+            max-width: 100vw;
+            height: auto;
+        }
+
+        #main-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .vase-group {
+            cursor: pointer;
+            transition: transform 150ms ease;
+        }
+
+        .vase-group:hover .vase-image,
+        .vase-group:focus .vase-image {
+            transform-origin: center;
+            transform: scale(1.02);
+        }
+
+        .vase-group:focus {
+            outline: none;
+        }
+
+        .thought-bubble {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 200ms ease;
+        }
+
+        .thought-bubble.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .bubble-bg {
+            fill: #FFF9F0;
+            fill-opacity: 0.92;
+            stroke: #6B5D4F;
+            stroke-width: 1.5;
+        }
+
+        .bubble-text {
+            fill: #3A3330;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .about-button {
+            cursor: pointer;
+            transition: transform 150ms ease;
+        }
+
+        .about-button:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .bubble-text {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gallery-container">
+        <svg id="main-svg" viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg">
+            <!-- Define filters for the white outline effect -->
+            <defs>
+                <filter id="white-outline" x="-50%" y="-50%" width="200%" height="200%">
+                    <feMorphology operator="dilate" radius="2" in="SourceAlpha" result="dilated"/>
+                    <feGaussianBlur in="dilated" stdDeviation="1" result="blurred"/>
+                    <feFlood flood-color="white" flood-opacity="0.8"/>
+                    <feComposite in2="blurred" operator="in" result="outline"/>
+                    <feMerge>
+                        <feMergeNode in="outline"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
+                <!-- Thought bubble path definition -->
+                <path id="bubble-tail" d="M 0,0 Q -5,10 -8,18 Q -5,12 5,10 Z" fill="#FFF9F0" stroke="#6B5D4F" stroke-width="1"/>
+            </defs>
+
+            <!-- Background painting -->
+            <image href="images/background.jpeg"
+                  x="0" y="0" width="1536" height="1024"/>
+
+            <!-- Title/Logo -->
+            <image class="title-logo" href="images/tors-bored.png"
+                  x="511" y="0" width="513" height="342"/>
+
+            <!-- About Sign -->
+            <g class="about-button" role="button" tabindex="0" aria-label="About Tors-Bored Studio">
+                <image href="images/about.png"
+                      x="1256" y="0" width="192" height="192"/>
+            </g>
+
+            <!-- Vase: Green Spiral (back shelf) -->
+            <g class="vase-group" role="button" tabindex="0" aria-label="Green Spiral Vase"
+               data-vase-id="green-spiral" data-cx="521" data-cy="530.5">
+                <image class="vase-image" href="images/green-vase.png"
+                      x="400" y="349" width="242" height="363"
+                      filter="url(#white-outline)" style="opacity: 0.95;"/>
+            </g>
+
+            <!-- Vase: Owl/Fnoobie (back shelf, rotated) -->
+            <g class="vase-group" role="button" tabindex="0" aria-label="Fnoobie Owl Vase"
+               data-vase-id="owl" data-cx="1414" data-cy="613.5">
+                <image class="vase-image" href="images/fnoobie.png"
+                      x="1351" y="519" width="126" height="189"
+                      transform="rotate(5 1414 613.5)"
+                      filter="url(#white-outline)" style="opacity: 0.95;"/>
+            </g>
+
+            <!-- Vase: White & Pink Flower (back shelf, rotated) -->
+            <g class="vase-group" role="button" tabindex="0" aria-label="White Pink Flower Vase"
+               data-vase-id="flower" data-cx="77.9" data-cy="577.97">
+                <image class="vase-image" href="images/white-flower.png"
+                      x="30.9" y="507.47" width="94" height="141"
+                      transform="rotate(-6 77.9 577.97)"
+                      filter="url(#white-outline)" style="opacity: 0.95;"/>
+            </g>
+
+            <!-- Vase: Tomato Jar (mid level) -->
+            <g class="vase-group" role="button" tabindex="0" aria-label="Tomato Jar"
+               data-vase-id="tomato" data-cx="869.5" data-cy="628.5">
+                <image class="vase-image" href="images/tomato.png"
+                      x="791" y="550" width="157" height="157"
+                      filter="url(#white-outline)" style="opacity: 0.95;"/>
+            </g>
+
+            <!-- Vase: White Tall Ribbed (front) -->
+            <g class="vase-group" role="button" tabindex="0" aria-label="White Tall Ribbed Vase"
+               data-vase-id="white-ribbed" data-cx="733.5" data-cy="869.5">
+                <image class="vase-image" href="images/white-rib-vase.png"
+                      x="664" y="765" width="139" height="209"
+                      filter="url(#white-outline)" style="opacity: 0.95;"/>
+            </g>
+
+            <!-- Vase: Multicolor/Mondrian (front) -->
+            <g class="vase-group" role="button" tabindex="0" aria-label="Multicolor Mondrian Vase"
+               data-vase-id="multicolor" data-cx="319.5" data-cy="903.5">
+                <image class="vase-image" href="images/multicolor-vase.png"
+                      x="239" y="783" width="161" height="241"
+                      filter="url(#white-outline)" style="opacity: 0.95;"/>
+            </g>
+
+            <!-- Thought Bubble Template (will be cloned and positioned) -->
+            <g id="thought-bubble-template" class="thought-bubble" style="display: none;">
+                <rect class="bubble-bg" rx="12" ry="12"/>
+                <path class="bubble-tail" fill="#FFF9F0" stroke="#6B5D4F" stroke-width="1.5"/>
+                <text class="bubble-text" x="10" y="25">
+                    <tspan x="10" dy="0"></tspan>
+                </text>
+            </g>
+        </svg>
+    </div>
+
+    <script>
+        // Vase data with bubble content and positioning preferences
+        const vaseData = {
+            'green-spiral': {
+                text: 'Tall coil form, carved spirals, olive over ochre.',
+                preferredPositions: ['top', 'right', 'left', 'bottom'],
+                offset: 56
+            },
+            'owl': {
+                text: 'Textured stoneware, butter glaze; cozy night light.',
+                preferredPositions: ['left', 'top', 'bottom', 'right'],
+                offset: 56
+            },
+            'flower': {
+                text: 'Soft blossoms over matte ivory; spring in a vessel.',
+                preferredPositions: ['right', 'top', 'bottom', 'left'],
+                offset: 56
+            },
+            'tomato': {
+                text: 'Hand-built lidded jar; glossy red slip with green knob.',
+                preferredPositions: ['right', 'top', 'left', 'bottom'],
+                offset: 56
+            },
+            'white-ribbed': {
+                text: 'Thrown, altered; speckled clay, satin eggshell.',
+                preferredPositions: ['top', 'right', 'left', 'bottom'],
+                offset: 72
+            },
+            'multicolor': {
+                text: 'Playful color blocks over warm porcelain.',
+                preferredPositions: ['top', 'left', 'right', 'bottom'],
+                offset: 72
+            }
+        };
+
+        let currentBubble = null;
+        const svg = document.getElementById('main-svg');
+        const maxBubbleWidth = 260;
+
+        // Create thought bubbles for each vase
+        document.querySelectorAll('.vase-group').forEach(vaseGroup => {
+            const vaseId = vaseGroup.getAttribute('data-vase-id');
+            const vaseInfo = vaseData[vaseId];
+            if (!vaseInfo) return;
+
+            // Create bubble element
+            const bubble = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            bubble.className = 'thought-bubble';
+            bubble.innerHTML = `
+                <rect class="bubble-bg" rx="12" ry="12"/>
+                <path class="bubble-tail" fill="#FFF9F0" stroke="#6B5D4F" stroke-width="1.5"/>
+                <foreignObject class="bubble-text-container" width="${maxBubbleWidth}" height="200">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="padding: 12px; font-family: Georgia, serif; font-size: 14px; color: #3A3330; line-height: 1.4;">
+                        ${vaseInfo.text}
+                    </div>
+                </foreignObject>
+            `;
+
+            vaseGroup.appendChild(bubble);
+            vaseGroup.bubble = bubble;
+            vaseGroup.vaseInfo = vaseInfo;
+        });
+
+        // Position bubble based on preferences and viewport constraints
+        function positionBubble(vaseGroup) {
+            const bubble = vaseGroup.bubble;
+            const vaseInfo = vaseGroup.vaseInfo;
+            const cx = parseFloat(vaseGroup.getAttribute('data-cx'));
+            const cy = parseFloat(vaseGroup.getAttribute('data-cy'));
+
+            // Get text dimensions
+            const foreignObject = bubble.querySelector('.bubble-text-container');
+            const textDiv = foreignObject.querySelector('div');
+            const bubbleHeight = 80; // Approximate height
+            const bubbleWidth = Math.min(maxBubbleWidth, 260);
+
+            let bestPosition = null;
+            let bestCoords = null;
+
+            // Try each preferred position
+            for (const position of vaseInfo.preferredPositions) {
+                let x, y, tailPath;
+                const offset = vaseInfo.offset;
+
+                switch (position) {
+                    case 'top':
+                        x = cx - bubbleWidth / 2;
+                        y = cy - offset - bubbleHeight;
+                        tailPath = `M ${cx - x - 10},${bubbleHeight - 5} Q ${cx - x},${bubbleHeight + 10} ${cx - x + 10},${bubbleHeight - 5}`;
+                        break;
+                    case 'right':
+                        x = cx + offset;
+                        y = cy - bubbleHeight / 2;
+                        tailPath = `M 5,${cy - y} Q -10,${cy - y} 5,${cy - y + 10}`;
+                        break;
+                    case 'left':
+                        x = cx - offset - bubbleWidth;
+                        y = cy - bubbleHeight / 2;
+                        tailPath = `M ${bubbleWidth - 5},${cy - y} Q ${bubbleWidth + 10},${cy - y} ${bubbleWidth - 5},${cy - y + 10}`;
+                        break;
+                    case 'bottom':
+                        x = cx - bubbleWidth / 2;
+                        y = cy + offset;
+                        tailPath = `M ${cx - x - 10},5 Q ${cx - x},${-10} ${cx - x + 10},5`;
+                        break;
+                }
+
+                // Check if position fits within viewport
+                if (x >= 0 && x + bubbleWidth <= 1536 && y >= 0 && y + bubbleHeight <= 1024) {
+                    bestPosition = position;
+                    bestCoords = { x, y, tailPath };
+                    break;
+                }
+            }
+
+            // Apply best position
+            if (bestCoords) {
+                bubble.setAttribute('transform', `translate(${bestCoords.x}, ${bestCoords.y})`);
+                const rect = bubble.querySelector('.bubble-bg');
+                rect.setAttribute('width', bubbleWidth);
+                rect.setAttribute('height', bubbleHeight);
+                const tail = bubble.querySelector('.bubble-tail');
+                tail.setAttribute('d', bestCoords.tailPath);
+            }
+        }
+
+        // Show bubble for a vase
+        function showBubble(vaseGroup) {
+            // Hide current bubble if exists
+            if (currentBubble && currentBubble !== vaseGroup.bubble) {
+                currentBubble.classList.remove('visible');
+            }
+
+            // Position and show new bubble
+            positionBubble(vaseGroup);
+            vaseGroup.bubble.classList.add('visible');
+            currentBubble = vaseGroup.bubble;
+        }
+
+        // Hide bubble
+        function hideBubble() {
+            if (currentBubble) {
+                currentBubble.classList.remove('visible');
+                currentBubble = null;
+            }
+        }
+
+        // Event handlers
+        document.querySelectorAll('.vase-group').forEach(vaseGroup => {
+            // Mouse events
+            vaseGroup.addEventListener('mouseenter', () => showBubble(vaseGroup));
+            vaseGroup.addEventListener('mouseleave', hideBubble);
+
+            // Keyboard events
+            vaseGroup.addEventListener('focus', () => showBubble(vaseGroup));
+            vaseGroup.addEventListener('blur', hideBubble);
+
+            // Touch events for mobile
+            vaseGroup.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentBubble === vaseGroup.bubble) {
+                    hideBubble();
+                } else {
+                    showBubble(vaseGroup);
+                }
+            });
+
+            // Keyboard activation
+            vaseGroup.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (currentBubble === vaseGroup.bubble) {
+                        hideBubble();
+                    } else {
+                        showBubble(vaseGroup);
+                    }
+                }
+            });
+        });
+
+        // Global escape key handler
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideBubble();
+            }
+        });
+
+        // Hide bubble when clicking outside
+        document.addEventListener('click', () => {
+            hideBubble();
+        });
+
+        // About button handler
+        document.querySelector('.about-button').addEventListener('click', () => {
+            alert('Tors-Bored Studio\n\nA celebration of ceramic artistry, where each piece tells its own story through form, texture, and glaze.\n\nVisit us to explore our collection and discover the beauty of handmade pottery.');
+        });
+    </script>
+</body>
+</html>
