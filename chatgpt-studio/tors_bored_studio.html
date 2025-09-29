@@ -103,6 +103,22 @@
       line-height: 1.3;
       word-wrap: break-word;
     }
+    .bubble-content a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.75);
+      color: #f4f4f4;
+      font-size: 15px;
+      text-decoration: none;
+    }
+    .bubble-content a:hover,
+    .bubble-content a:focus-visible {
+      background: rgba(0,0,0,0.9);
+    }
 
     /* Accessibility helper for keyboard focus */
     .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; border: 0; padding: 0; clip: rect(0 0 0 0); overflow: hidden; }
@@ -289,11 +305,11 @@
     <!-- Default bubble template (tail pointing down) -->
     <g id="bubble-template" class="bubble" opacity="0.98">
       <!-- rect background -->
-      <rect x="-130" y="-90" width="260" height="100" rx="14" ry="14" fill="#faf6f0" filter="url(#bubble-shadow)"/>
+      <rect x="-130" y="-130" width="260" height="140" rx="18" ry="18" fill="#faf6f0" filter="url(#bubble-shadow)"/>
       <!-- tail (triangle-ish) pointing downward by default -->
       <path d="M 0 10 L -10 0 L 10 0 Z" fill="#faf6f0"/>
       <!-- text blocks using foreignObject for text wrapping -->
-      <foreignObject x="-120" y="-85" width="240" height="90">
+      <foreignObject x="-120" y="-120" width="240" height="130">
         <div class="bubble-content" xmlns="http://www.w3.org/1999/xhtml">
           <div class="title">Title</div>
           <div class="body">Body</div>
@@ -301,14 +317,15 @@
       </foreignObject>
     </g>
 
+
     <!-- Left bubble template (tail pointing right) -->
     <g id="bubble-template-left" class="bubble" opacity="0.98">
       <!-- rect background -->
-      <rect x="-260" y="-50" width="260" height="100" rx="14" ry="14" fill="#faf6f0" filter="url(#bubble-shadow)"/>
+      <rect x="-260" y="-70" width="260" height="130" rx="18" ry="18" fill="#faf6f0" filter="url(#bubble-shadow)"/>
       <!-- tail pointing right -->
       <path d="M 0 0 L -10 -10 L -10 10 Z" fill="#faf6f0"/>
       <!-- text blocks using foreignObject for text wrapping -->
-      <foreignObject x="-250" y="-45" width="240" height="90">
+      <foreignObject x="-250" y="-60" width="240" height="120">
         <div class="bubble-content" xmlns="http://www.w3.org/1999/xhtml">
           <div class="title">Title</div>
           <div class="body">Body</div>
@@ -319,11 +336,11 @@
     <!-- Right bubble template (tail pointing left) -->
     <g id="bubble-template-right" class="bubble" opacity="0.98">
       <!-- rect background -->
-      <rect x="0" y="-50" width="260" height="100" rx="14" ry="14" fill="#faf6f0" filter="url(#bubble-shadow)"/>
+      <rect x="0" y="-70" width="260" height="130" rx="18" ry="18" fill="#faf6f0" filter="url(#bubble-shadow)"/>
       <!-- tail pointing left -->
       <path d="M 0 0 L 10 -10 L 10 10 Z" fill="#faf6f0"/>
       <!-- text blocks using foreignObject for text wrapping -->
-      <foreignObject x="10" y="-45" width="240" height="90">
+      <foreignObject x="10" y="-60" width="240" height="120">
         <div class="bubble-content" xmlns="http://www.w3.org/1999/xhtml">
           <div class="title">Title</div>
           <div class="body">Body</div>
@@ -350,9 +367,10 @@
 
     <!-- Tomato Jar -->
     <g id="vase-tomato" class="vase" tabindex="0" role="button" aria-label="Tomato Jar" aria-expanded="false"
-       data-title="Tomato Jar"
-       data-body="Hand-built lidded jar; glossy red slip with green knob."
-       data-bubble-offset="72">
+       data-title="Tor-Chinese"
+       data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
+       data-bubble-offset="96"
+       data-link="https://github.com/tor-iv/tor-chinese">
       <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
     </g>
 
@@ -613,6 +631,18 @@
         const body = g.dataset.body || '';
         b.querySelector('.title').textContent = title;
         b.querySelector('.body').textContent = body;
+        const linkUrl = g.dataset.link;
+        if (linkUrl) {
+          const contentNode = b.querySelector('.bubble-content');
+          if (contentNode) {
+            const link = document.createElement('a');
+            link.href = linkUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = 'View project →';
+            contentNode.appendChild(link);
+          }
+        }
 
         // Compute anchor based on position
         const bbox = g.getBBox();
@@ -621,17 +651,14 @@
 
         switch(position) {
           case 'left':
-            // Position to the left of the vase
             anchorX = bbox.x - 20;
             anchorY = bbox.y + bbox.height / 2;
             break;
           case 'right':
-            // Position to the right of the vase
             anchorX = bbox.x + bbox.width + 20;
             anchorY = bbox.y + bbox.height / 2;
             break;
           default:
-            // Default: above the vase
             anchorX = bbox.x + bbox.width / 2;
             anchorY = bbox.y - offset;
         }
