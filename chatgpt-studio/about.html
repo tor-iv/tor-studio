@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About — Tors‑Bored Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+  <style>
+    /* Page frame */
+    html, body { height: 100%; margin: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
+      font-family: "Caveat", cursive;
+      color: #1b1b1b;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-family: "Caveat Brush", cursive;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: #faf6f0;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .subtitle {
+      font-family: "Caveat", cursive;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      color: #d4cfc4;
+      margin: 10px 0 0 0;
+      font-weight: 500;
+    }
+
+    /* Content cards */
+    .card {
+      background: #faf6f0;
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-family: "Caveat Brush", cursive;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      margin: 0 0 20px 0;
+      color: #1b1b1b;
+    }
+
+    .card p {
+      font-family: "Caveat", cursive;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      line-height: 1.4;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    .card p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Navigation */
+    .nav {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .nav-link {
+      display: inline-block;
+      background: #faf6f0;
+      color: #1b1b1b;
+      text-decoration: none;
+      padding: 15px 30px;
+      border-radius: 14px;
+      font-family: "Caveat Brush", cursive;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      transition: all 160ms ease;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+      background: #f5f1eb;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .container {
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="title">Tors‑Bored Studio</h1>
+      <p class="subtitle">Where clay becomes art</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="tors_bored_studio.html" class="nav-link">← Back to Gallery</a>
+    </nav>
+
+    <!-- About Content -->
+    <main>
+      <section class="card">
+        <h2>Welcome to Our Studio</h2>
+        <p>Tors-Bored Studio is a creative space where traditional pottery meets contemporary design. Each piece is handcrafted with passion, bringing together time-honored techniques with modern artistic vision.</p>
+        <p>Our studio celebrates the beauty of imperfection and the warmth of handmade objects that tell their own unique stories.</p>
+      </section>
+
+      <section class="card">
+        <h2>The Craft</h2>
+        <p>Working with clay is a meditation in motion. From the spinning wheel to the kiln's fire, every step in our process is carefully considered and lovingly executed.</p>
+        <p>We specialize in functional pottery that brings joy to everyday moments – vases that hold memories, bowls that gather families, and vessels that transform spaces.</p>
+      </section>
+
+      <section class="card">
+        <h2>Our Philosophy</h2>
+        <p>We believe that handmade objects carry the spirit of their makers. Each piece reflects not just skill, but intention, care, and the quiet moments of creation.</p>
+        <p>In our fast-paced world, pottery reminds us to slow down, to appreciate the tactile, and to find beauty in the simple act of making something with our hands.</p>
+      </section>
+
+      <section class="card">
+        <h2>Visit Us</h2>
+        <p>Our studio is open by appointment for those who wish to see the creative process firsthand or discuss custom pieces.</p>
+        <p>We also offer pottery classes for those drawn to learn this ancient art form in a supportive, creative environment.</p>
+        <p>Contact us to schedule a visit or learn more about our workshops and available pieces.</p>
+      </section>
+    </main>
+
+    <!-- Footer Navigation -->
+    <nav class="nav">
+      <a href="tors_bored_studio.html" class="nav-link">Explore the Gallery →</a>
+    </nav>
+  </div>
+</body>
+</html>
