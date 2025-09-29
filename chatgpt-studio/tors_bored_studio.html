@@ -64,6 +64,7 @@
       transform: scale(1.02);
       filter: url(#white-outline);
     }
+    .vase, .vase image { pointer-events: auto; }
 
     /* Thought bubbles */
     .bubble { display: none; }
@@ -598,178 +599,149 @@
   </script>
 
   <script>
-    (function() {
-      const svg = document.getElementById('scene');
-      const groups = Array.from(svg.querySelectorAll('.vase'));
-      const template = svg.getElementById('bubble-template');
-      const templateLeft = svg.getElementById('bubble-template-left');
-      const templateRight = svg.getElementById('bubble-template-right');
+(function() {
+  const svg = document.getElementById('scene');
+  const groups = Array.from(svg.querySelectorAll('.vase'));
+  const template = svg.getElementById('bubble-template');
+  const templateLeft = svg.getElementById('bubble-template-left');
+  const templateRight = svg.getElementById('bubble-template-right');
 
-      let openBubble = null; // enforce single-bubble rule
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-      function placeBubbleForGroup(g) {
-        // Remove existing bubble if any
-        const old = g.querySelector('.bubble');
-        if (old && old !== template && old !== templateLeft && old !== templateRight) old.remove();
+  let openBubble = null; // { group, bubble }
 
-        // Determine which template to use based on bubble position
-        const position = g.dataset.bubblePosition || 'top';
-        const customTemplate = g.dataset.bubbleTemplate || '';
-        let templateToUse;
-        switch(position) {
-          case 'left':
-            templateToUse = templateLeft;
-            break;
-          case 'right':
-            templateToUse = templateRight;
-            break;
-          default:
-            templateToUse = template;
-        }
+  function placeBubbleForGroup(g) {
+    const old = g.querySelector('.bubble.open');
+    if (old && old !== template && old !== templateLeft && old !== templateRight) old.remove();
 
-        // Clone appropriate template and inject content
-        const b = templateToUse.cloneNode(true);
-        b.id = '';
-        b.classList.add('open');
+    const position = g.dataset.bubblePosition || 'top';
+    const tpl = position === 'left' ? templateLeft : position === 'right' ? templateRight : template;
 
-        const title = g.dataset.title || '';
-        const body = g.dataset.body || '';
-        b.querySelector('.title').textContent = title;
-        b.querySelector('.body').textContent = body;
-        const previewUrl = g.dataset.previewUrl;
-        const linkUrl = g.dataset.link;
-        const contentNode = b.querySelector('.bubble-content');
-        if (contentNode) {
-          const rect = b.querySelector('rect');
-          const tail = b.querySelector('path');
-          const foreignObject = b.querySelector('foreignObject');
+    const b = tpl.cloneNode(true);
+    b.id = '';
+    b.classList.add('open');
 
-          if (previewUrl && rect && tail && foreignObject) {
-            rect.setAttribute('x', '20');
-            rect.setAttribute('y', '-210');
-            rect.setAttribute('width', '300');
-            rect.setAttribute('height', '240');
-            tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
-            foreignObject.setAttribute('x', '36');
-            foreignObject.setAttribute('y', '-198');
-            foreignObject.setAttribute('width', '268');
-            foreignObject.setAttribute('height', '220');
+    const title = g.dataset.title || '';
+    const body = g.dataset.body || '';
+    b.querySelector('.title').textContent = title;
+    b.querySelector('.body').textContent = body;
 
-            const image = document.createElement('img');
-            image.src = previewUrl;
-            image.alt = `${title || 'Project'} preview`;
-            image.loading = 'lazy';
-            image.style.width = '100%';
-            image.style.height = 'auto';
-            image.style.borderRadius = '14px';
-            image.style.marginTop = '6px';
-            contentNode.appendChild(image);
-          }
+    const rect = b.querySelector('rect');
+    const tail = b.querySelector('path');
+    const foreignObject = b.querySelector('foreignObject');
+    const contentNode = b.querySelector('.bubble-content');
+    const previewUrl = g.dataset.previewUrl;
+    const linkUrl = g.dataset.link;
 
-          if (linkUrl) {
-            const link = document.createElement('a');
-            link.href = linkUrl;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.textContent = previewUrl ? 'View code →' : 'View project →';
-            contentNode.appendChild(link);
-          }
-        }
+    if (previewUrl && rect && tail && foreignObject && contentNode) {
+      rect.setAttribute('x', '20');
+      rect.setAttribute('y', '-210');
+      rect.setAttribute('width', '300');
+      rect.setAttribute('height', '240');
+      tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
+      foreignObject.setAttribute('x', '36');
+      foreignObject.setAttribute('y', '-198');
+      foreignObject.setAttribute('width', '268');
+      foreignObject.setAttribute('height', '220');
 
-        // Compute anchor based on position
-        const bbox = g.getBBox();
-        const offset = parseFloat(g.dataset.bubbleOffset || '56');
-        const offsetX = parseFloat(g.dataset.bubbleOffsetX || '0');
-        const offsetY = parseFloat(g.dataset.bubbleOffsetY || '0');
-        let anchorX, anchorY;
+      const image = document.createElement('img');
+      image.src = previewUrl;
+      image.alt = `${title || 'Project'} preview`;
+      image.loading = 'lazy';
+      image.style.width = '100%';
+      image.style.height = 'auto';
+      image.style.borderRadius = '14px';
+      image.style.marginTop = '6px';
+      contentNode.appendChild(image);
+    }
 
-        switch(position) {
-          case 'left':
-            anchorX = bbox.x - 20 + offsetX;
-            anchorY = bbox.y + bbox.height / 2 + offsetY;
-            break;
-          case 'right':
-            anchorX = bbox.x + bbox.width + 20 + offsetX;
-            anchorY = bbox.y + bbox.height / 2 + offsetY;
-            break;
-          default:
-            anchorX = bbox.x + bbox.width / 2 + offsetX;
-            anchorY = bbox.y - offset + offsetY;
-        }
+    if (linkUrl && contentNode) {
+      const link = document.createElement('a');
+      link.href = linkUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = previewUrl ? 'View code →' : 'View project →';
+      contentNode.appendChild(link);
+    }
 
-        // Position by translating the whole bubble group
-        b.setAttribute('transform', `translate(${anchorX}, ${anchorY})`);
+    const bbox = g.getBBox();
+    const offset = parseFloat(g.dataset.bubbleOffset || '56');
+    const offsetX = parseFloat(g.dataset.bubbleOffsetX || '0');
+    const offsetY = parseFloat(g.dataset.bubbleOffsetY || '0');
 
-        // Mark for styling/show
-        b.classList.add('bubble');
-        g.appendChild(b);
+    let ax; let ay;
+    if (position === 'left') {
+      ax = bbox.x - 20 + offsetX;
+      ay = bbox.y + bbox.height / 2 + offsetY;
+    } else if (position === 'right') {
+      ax = bbox.x + bbox.width + 20 + offsetX;
+      ay = bbox.y + bbox.height / 2 + offsetY;
+    } else {
+      ax = bbox.x + bbox.width / 2 + offsetX;
+      ay = bbox.y - offset + offsetY;
+    }
 
-        openBubble = { group: g, bubble: b };
-        g.setAttribute('aria-expanded', 'true');
+    b.setAttribute('transform', `translate(${ax}, ${ay})`);
+
+    g.appendChild(b);
+    g.setAttribute('aria-expanded', 'true');
+    openBubble = { group: g, bubble: b };
+  }
+
+  function closeOpenBubble() {
+    if (!openBubble) return;
+    const { group, bubble } = openBubble;
+    if (bubble && bubble.parentNode) bubble.parentNode.removeChild(bubble);
+    if (group) group.setAttribute('aria-expanded', 'false');
+    openBubble = null;
+  }
+
+  groups.forEach(g => {
+    g.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (openBubble && openBubble.group === g) closeOpenBubble();
+        else { closeOpenBubble(); placeBubbleForGroup(g); }
       }
+      if (e.key === 'Escape') closeOpenBubble();
+    });
 
-      function closeOpenBubble() {
-        if (!openBubble) return;
-        const { group, bubble } = openBubble;
-        if (bubble && bubble.parentNode) bubble.parentNode.removeChild(bubble);
-        if (group) group.setAttribute('aria-expanded', 'false');
-        openBubble = null;
-      }
-
-      // Event wiring per group
-      groups.forEach(g => {
-        const bubbleLink = g.dataset.link;
-        // Hover (desktop): open on enter, close on leave
-        g.addEventListener('pointerenter', () => {
-          closeOpenBubble();
-          placeBubbleForGroup(g);
-        });
-        g.addEventListener('pointerleave', () => {
-          // Only close if the bubble belongs to this group
-          if (openBubble && openBubble.group === g) closeOpenBubble();
-        });
-
-        // Keyboard: Enter/Space toggles; Esc closes
-        g.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            if (bubbleLink) {
-              window.open(bubbleLink, '_blank', 'noopener');
-              return;
-            }
-            if (openBubble && openBubble.group === g) closeOpenBubble();
-            else { closeOpenBubble(); placeBubbleForGroup(g); }
-          }
-          if (e.key === 'Escape') { closeOpenBubble(); }
-        });
-
-        // Touch/click: toggle
-        g.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (bubbleLink) {
-            window.open(bubbleLink, '_blank', 'noopener');
-            return;
-          }
-          if (openBubble && openBubble.group === g) closeOpenBubble();
-          else { closeOpenBubble(); placeBubbleForGroup(g); }
-        });
-      });
-
-      // Close bubbles when clicking outside
-      document.addEventListener('click', (e) => {
-        // If click is outside the SVG or not inside current open group, close
-        if (!openBubble) return;
-        const target = e.target;
-        if (!svg.contains(target)) { closeOpenBubble(); return; }
-        // If click is inside the open group, ignore (handled above)
-        if (openBubble.group.contains(target)) return;
+    if (canHover) {
+      g.addEventListener('pointerenter', () => {
         closeOpenBubble();
+        placeBubbleForGroup(g);
       });
+      g.addEventListener('pointerleave', () => {
+        if (openBubble && openBubble.group === g) closeOpenBubble();
+      });
+    } else {
+      g.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (openBubble && openBubble.group === g) closeOpenBubble();
+        else { closeOpenBubble(); placeBubbleForGroup(g); }
+      });
+    }
+  });
 
-      // Optional: close on ESC anywhere
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeOpenBubble(); });
-    })();
-  </script>
+  document.addEventListener('click', (e) => {
+    if (!openBubble) return;
+    if (!svg.contains(e.target)) closeOpenBubble();
+  }, { passive: true });
+
+  if (isTouchDevice) {
+    document.addEventListener('touchstart', (e) => {
+      if (!openBubble) return;
+      if (!svg.contains(e.target)) closeOpenBubble();
+    }, { passive: true });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeOpenBubble();
+  });
+})();
+</script>
+
 
   <script>
     (function() {
