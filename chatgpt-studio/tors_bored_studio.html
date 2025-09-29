@@ -9,21 +9,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
   <style>
     /* Page frame */
-    html, body { height: 100%; margin: 0; }
+    html { margin: 0; }
     body {
+      margin: 0;
+      min-height: 100vh;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 16px 0;
       background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
+      -webkit-overflow-scrolling: touch;
     }
 
     /* Responsive SVG container: keep full painting visible without crop */
     .stage-wrap {
+      position: relative;
       width: 100vw;
       margin: 0 auto;
-      position: relative;
-      overflow: visible;
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-behavior: smooth;
+      cursor: grab;
     }
+    .stage-wrap:active { cursor: grabbing; }
     .stage {
       display: block;
       width: 100vw;
@@ -34,13 +41,11 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
       border-radius: 14px;
       background: #0a0d0c;
-      transition: transform 160ms ease;
     }
     @media (max-aspect-ratio: 3/2) {
-      .stage-wrap { overflow: hidden; }
       .stage {
         width: auto;
-        height: 120vh;
+        height: max(120vh, 120dvh, 120svh);
       }
     }
 
@@ -270,7 +275,7 @@
 
     <!-- Title / Logo -->
     <g id="title">
-      <image href="images/tors-bored.png" x="511" y="0" width="513" height="342"/>
+      <image href="images/tors-bored.png" x="511" y="0" width="384" height="256"/>
     </g>
 
     <!-- About sign linking to overlay -->
@@ -453,90 +458,79 @@
   <script>
     (function() {
       const wrap = document.querySelector('.stage-wrap');
-      const svg = document.getElementById('scene');
-      if (!wrap || !svg) return;
+      if (!wrap) return;
 
-      const mq = window.matchMedia('(max-aspect-ratio: 3/2)');
-
-      function getOverflow() {
-        const wrapWidth = wrap.clientWidth;
-        const svgWidth = svg.getBoundingClientRect().width;
-        return Math.max(0, svgWidth - wrapWidth);
+      function hasHorizontalOverflow() {
+        return wrap.scrollWidth > wrap.clientWidth + 1;
       }
 
-      function centerTall() {
-        const overflow = getOverflow();
-        svg.style.transform = overflow ? `translateX(${-overflow / 2}px)` : '';
+      function centerScene() {
+        requestAnimationFrame(() => {
+          const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+          wrap.scrollLeft = maxScroll > 0 ? maxScroll / 2 : 0;
+        });
       }
 
-      const onModeChange = () => { centerTall(); };
-      if (typeof mq.addEventListener === 'function') mq.addEventListener('change', onModeChange);
-      else if (typeof mq.addListener === 'function') mq.addListener(onModeChange);
+      window.addEventListener('load', centerScene);
+      window.addEventListener('resize', centerScene);
 
-      let isDragging = false;
+      let isMouseDown = false;
       let startX = 0;
-      let startTx = 0;
-      let targetTx = 0;
-      let tx = 0;
-      let rafId = 0;
+      let startScroll = 0;
 
-      function clamp(value, min, max) {
-        return Math.max(min, Math.min(max, value));
-      }
-
-      function parseCurrentTranslate() {
-        const match = /translateX\((-?\d+(?:\.\d+)?)px\)/.exec(svg.style.transform || '');
-        return match ? parseFloat(match[1]) : 0;
-      }
-
-      function tick() {
-        tx += (targetTx - tx) * 0.18;
-        if (Math.abs(targetTx - tx) < 0.4) {
-          tx = targetTx;
-          rafId = 0;
-        } else {
-          rafId = requestAnimationFrame(tick);
-        }
-        svg.style.transform = `translateX(${tx}px)`;
-      }
-
-      function startDrag(event) {
-        if (!mq.matches) return;
-        isDragging = true;
-        cancelAnimationFrame(rafId);
-        rafId = 0;
-        const pointX = event.touches ? event.touches[0].clientX : event.clientX;
-        startX = pointX;
-        startTx = parseCurrentTranslate();
-        targetTx = startTx;
+      wrap.addEventListener('mousedown', (event) => {
+        if (!hasHorizontalOverflow()) return;
+        if (event.button !== 0) return;
+        if (event.target.closest('a, button, .vase')) return;
+        isMouseDown = true;
+        startX = event.clientX;
+        startScroll = wrap.scrollLeft;
+        wrap.classList.add('dragging');
         wrap.style.cursor = 'grabbing';
-      }
+      });
 
-      function moveDrag(event) {
-        if (!isDragging) return;
-        const pointX = event.touches ? event.touches[0].clientX : event.clientX;
-        const delta = pointX - startX;
-        const overflow = getOverflow();
-        targetTx = clamp(startTx + delta, -overflow, 0);
-        if (!rafId) rafId = requestAnimationFrame(tick);
-      }
-
-      function endDrag() {
-        if (!isDragging) return;
-        isDragging = false;
+      window.addEventListener('mouseup', () => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        wrap.classList.remove('dragging');
         wrap.style.cursor = '';
-      }
+      });
 
-      wrap.addEventListener('mousedown', startDrag);
-      window.addEventListener('mousemove', moveDrag);
-      window.addEventListener('mouseup', endDrag);
-      wrap.addEventListener('touchstart', startDrag, { passive: true });
-      window.addEventListener('touchmove', moveDrag, { passive: true });
-      window.addEventListener('touchend', endDrag);
+      window.addEventListener('mousemove', (event) => {
+        if (!isMouseDown) return;
+        wrap.scrollLeft = startScroll - (event.clientX - startX);
+      });
 
-      window.addEventListener('resize', centerTall);
-      window.addEventListener('load', centerTall);
-      centerTall();
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let draggingHorizontally = false;
+
+      wrap.addEventListener('touchstart', (event) => {
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        draggingHorizontally = false;
+      }, { passive: true });
+
+      wrap.addEventListener('touchmove', (event) => {
+        if (!hasHorizontalOverflow()) return;
+        if (event.target.closest('a, button, .vase')) return;
+        const touch = event.touches[0];
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+
+        if (!draggingHorizontally) {
+          if (Math.abs(dx) > Math.abs(dy) + 4) draggingHorizontally = true;
+          else return; // allow vertical scroll
+        }
+
+        event.preventDefault();
+        wrap.scrollLeft -= dx;
+        touchStartX = touch.clientX;
+      }, { passive: false });
+
+      centerScene();
+      window.scrollTo({ top: 0, behavior: 'auto' });
     })();
   </script>
 
