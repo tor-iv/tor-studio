@@ -9,26 +9,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
   <style>
     /* Page frame */
-    html { height: 100%; }
+    html, body { height: 100%; margin: 0; }
     body {
-      min-height: 100vh;
-      margin: 0;
-      background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
       overflow-y: auto;
-      padding: 0;
+      overflow-x: hidden;
+      padding: 16px 0;
+      background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
     }
 
     /* Responsive SVG container: keep full painting visible without crop */
+    .stage-wrap {
+      width: 100vw;
+      margin: 0 auto;
+      position: relative;
+      overflow: visible;
+    }
     .stage {
       display: block;
-      width: 100vw;               /* fill entire viewport width */
+      width: 100vw;
       height: auto;
-      aspect-ratio: 1536 / 1024;  /* preserve 3:2 ratio */
+      aspect-ratio: 1536 / 1024;
       margin: 0 auto;
 
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
       border-radius: 14px;
       background: #0a0d0c;
+      transition: transform 160ms ease;
+    }
+    @media (max-aspect-ratio: 3/2) {
+      .stage-wrap { overflow: hidden; }
+      .stage {
+        width: auto;
+        height: 120vh;
+      }
     }
 
     /* Interaction affordances */
@@ -226,6 +239,7 @@
 <body>
 
   <!-- Single SVG scene with shared coordinate system -->
+  <div class="stage-wrap">
   <svg id="scene" class="stage" viewBox="0 0 1536 1024" role="img" aria-label="Tors-Bored Studio interactive pottery gallery">
     <defs>
       <!-- Small white outline that hugs image alpha; applied on hover/focus -->
@@ -255,7 +269,9 @@
     <image href="images/background.jpeg" x="0" y="0" width="1536" height="1024" preserveAspectRatio="none"/>
 
     <!-- Title / Logo -->
-    <image href="images/tors-bored.png" x="511" y="0" width="513" height="342"/>
+    <g id="title">
+      <image href="images/tors-bored.png" x="511" y="0" width="513" height="342"/>
+    </g>
 
     <!-- About sign linking to overlay -->
     <a id="about-link" href="#about" aria-label="About Tors-Bored Studio">
@@ -361,6 +377,7 @@
     </g>
 
   </svg>
+  </div>
 
   <!-- ===== ABOUT MODAL (overlay) ===== -->
   <div id="about-overlay" class="overlay" hidden>
@@ -432,6 +449,137 @@
       </div>
     </section>
   </div>
+
+  <script>
+    (function() {
+      const wrap = document.querySelector('.stage-wrap');
+      const svg = document.getElementById('scene');
+      if (!wrap || !svg) return;
+
+      const mq = window.matchMedia('(max-aspect-ratio: 3/2)');
+
+      function getOverflow() {
+        const wrapWidth = wrap.clientWidth;
+        const svgWidth = svg.getBoundingClientRect().width;
+        return Math.max(0, svgWidth - wrapWidth);
+      }
+
+      function centerTall() {
+        const overflow = getOverflow();
+        svg.style.transform = overflow ? `translateX(${-overflow / 2}px)` : '';
+      }
+
+      const onModeChange = () => { centerTall(); };
+      if (typeof mq.addEventListener === 'function') mq.addEventListener('change', onModeChange);
+      else if (typeof mq.addListener === 'function') mq.addListener(onModeChange);
+
+      let isDragging = false;
+      let startX = 0;
+      let startTx = 0;
+      let targetTx = 0;
+      let tx = 0;
+      let rafId = 0;
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function parseCurrentTranslate() {
+        const match = /translateX\((-?\d+(?:\.\d+)?)px\)/.exec(svg.style.transform || '');
+        return match ? parseFloat(match[1]) : 0;
+      }
+
+      function tick() {
+        tx += (targetTx - tx) * 0.18;
+        if (Math.abs(targetTx - tx) < 0.4) {
+          tx = targetTx;
+          rafId = 0;
+        } else {
+          rafId = requestAnimationFrame(tick);
+        }
+        svg.style.transform = `translateX(${tx}px)`;
+      }
+
+      function startDrag(event) {
+        if (!mq.matches) return;
+        isDragging = true;
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+        const pointX = event.touches ? event.touches[0].clientX : event.clientX;
+        startX = pointX;
+        startTx = parseCurrentTranslate();
+        targetTx = startTx;
+        wrap.style.cursor = 'grabbing';
+      }
+
+      function moveDrag(event) {
+        if (!isDragging) return;
+        const pointX = event.touches ? event.touches[0].clientX : event.clientX;
+        const delta = pointX - startX;
+        const overflow = getOverflow();
+        targetTx = clamp(startTx + delta, -overflow, 0);
+        if (!rafId) rafId = requestAnimationFrame(tick);
+      }
+
+      function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        wrap.style.cursor = '';
+      }
+
+      wrap.addEventListener('mousedown', startDrag);
+      window.addEventListener('mousemove', moveDrag);
+      window.addEventListener('mouseup', endDrag);
+      wrap.addEventListener('touchstart', startDrag, { passive: true });
+      window.addEventListener('touchmove', moveDrag, { passive: true });
+      window.addEventListener('touchend', endDrag);
+
+      window.addEventListener('resize', centerTall);
+      window.addEventListener('load', centerTall);
+      centerTall();
+    })();
+  </script>
+
+  <script>
+    (function() {
+      const svg = document.getElementById('scene');
+      const title = document.getElementById('title');
+      if (!svg || !title) return;
+
+      const titleImage = title.querySelector('image');
+      if (!titleImage) return;
+
+      function fitTitle() {
+        const sceneRect = svg.getBoundingClientRect();
+        if (!sceneRect.width) return;
+
+        const safeWidth = sceneRect.width * 0.7;
+        const width = parseFloat(titleImage.getAttribute('width') || '0');
+        const height = parseFloat(titleImage.getAttribute('height') || '0');
+        const x = parseFloat(titleImage.getAttribute('x') || '0');
+        const y = parseFloat(titleImage.getAttribute('y') || '0');
+
+        if (!width || !height) return;
+
+        const renderedPerUnit = sceneRect.width / 1536;
+        const renderedTitleWidth = width * renderedPerUnit;
+        let scale = 1;
+        if (renderedTitleWidth > safeWidth) {
+          scale = safeWidth / renderedTitleWidth;
+        }
+
+        const cx = x + width / 2;
+        const cy = y + height / 2;
+        title.setAttribute('transform', `translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})`);
+      }
+
+      const resizeObserver = new ResizeObserver(fitTitle);
+      resizeObserver.observe(document.documentElement);
+      window.addEventListener('load', fitTitle);
+      window.addEventListener('resize', fitTitle);
+      fitTitle();
+    })();
+  </script>
 
   <script>
     (function() {
