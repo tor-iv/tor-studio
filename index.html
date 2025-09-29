@@ -35,7 +35,7 @@
       display: block;
       width: 100vw;
       height: auto;
-      aspect-ratio: 1536 / 1024;
+      aspect-ratio: var(--scene-ar, 1536 / 1024);
       margin: 0 auto;
 
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
@@ -65,6 +65,17 @@
       filter: url(#white-outline);
     }
     .vase, .vase image { pointer-events: auto; }
+
+    #about-link image {
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform 160ms ease, filter 160ms ease;
+    }
+    #about-link:hover image,
+    #about-link:focus-visible image {
+      transform: scale(1.02);
+      filter: url(#white-outline);
+    }
 
     /* Thought bubbles */
     .bubble { display: none; }
@@ -288,7 +299,7 @@
     </defs>
 
     <!-- Background painting -->
-    <image href="images/background.jpeg" x="0" y="0" width="1536" height="1024" preserveAspectRatio="none"/>
+    <image href="images/background.jpeg" x="0" y="0" width="1536" height="1024" preserveAspectRatio="xMidYMid slice"/>
 
     <!-- Title / Logo -->
     <g id="title">
@@ -566,10 +577,12 @@
       const titleImage = title.querySelector('image');
       if (!titleImage) return;
 
-      function fitTitle() {
+      function fitTitleTo70() {
         const sceneRect = svg.getBoundingClientRect();
         if (!sceneRect.width) return;
 
+        const vb = svg.viewBox.baseVal || { width: 1536 };
+        const vbWidth = vb && vb.width ? vb.width : 1536;
         const safeWidth = sceneRect.width * 0.7;
         const width = parseFloat(titleImage.getAttribute('width') || '0');
         const height = parseFloat(titleImage.getAttribute('height') || '0');
@@ -578,7 +591,7 @@
 
         if (!width || !height) return;
 
-        const renderedPerUnit = sceneRect.width / 1536;
+        const renderedPerUnit = sceneRect.width / vbWidth;
         const renderedTitleWidth = width * renderedPerUnit;
         let scale = 1;
         if (renderedTitleWidth > safeWidth) {
@@ -590,11 +603,13 @@
         title.setAttribute('transform', `translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})`);
       }
 
-      const resizeObserver = new ResizeObserver(fitTitle);
+      window.fitTitleTo70 = fitTitleTo70;
+
+      const resizeObserver = new ResizeObserver(fitTitleTo70);
       resizeObserver.observe(document.documentElement);
-      window.addEventListener('load', fitTitle);
-      window.addEventListener('resize', fitTitle);
-      fitTitle();
+      window.addEventListener('load', fitTitleTo70);
+      window.addEventListener('resize', fitTitleTo70);
+      fitTitleTo70();
     })();
   </script>
 
@@ -818,6 +833,145 @@
           first.focus();
         }
       });
+    })();
+  </script>
+
+  <script>
+    (function() {
+      const svg = document.getElementById('scene');
+      if (!svg) return;
+
+      const bg = svg.querySelector('image');
+      const titleImg = svg.querySelector('#title image');
+      const aboutImg = svg.querySelector('#about-link image');
+      if (!bg || !titleImg || !aboutImg) return;
+
+      // Helper to set an <image>'s geometry + rotation (angle in degrees)
+      function setGeom(img, { x, y, w, h, rot = 0 }) {
+        img.setAttribute('x', x);
+        img.setAttribute('y', y);
+        img.setAttribute('width', w);
+        img.setAttribute('height', h);
+        if (rot && +rot !== 0) {
+          const cx = x + w / 2;
+          const cy = y + h / 2;
+          img.setAttribute('transform', `rotate(${rot} ${cx} ${cy})`);
+        } else {
+          img.removeAttribute('transform');
+        }
+      }
+
+      // Capture the current desktop layout from DOM as the default
+      function snapshotDesktop() {
+        const get = (sel) => {
+          const img = svg.querySelector(sel);
+          return {
+            el: img,
+            x: +img.getAttribute('x'),
+            y: +img.getAttribute('y'),
+            w: +img.getAttribute('width'),
+            h: +img.getAttribute('height'),
+            t: img.getAttribute('transform') || ''
+          };
+        };
+        return {
+          viewBox: '0 0 1536 1024',
+          aspect: '1536/1024',
+          bgHref: bg.getAttribute('href'),
+          items: {
+            title: get('#title image'),
+            about: get('#about-link image'),
+            green: get('#vase-green image'),
+            owl: get('#vase-owl image'),
+            tomato: get('#vase-tomato image'),
+            ribbed: get('#vase-ribbed image'),
+            multi: get('#vase-mondrian image'),
+            flower: get('#vase-flower image')
+          }
+        };
+      }
+
+      const DESKTOP = snapshotDesktop();
+
+      // Mobile (9:16) layout configuration
+      const MOBILE = {
+        viewBox: '0 0 1024 1536',
+        aspect: '1024/1536',
+        bgHref: 'images/background-portrait.png',
+        geom: {
+          title:  { x: 314, y: 55,   w: 364, h: 242, rot: 0 },
+          about:  { x: 848, y: 0,    w: 148, h: 148, rot: 0 },
+          green:  { x: 234, y: 488,  w: 314, h: 471, rot: 0 },
+          owl:    { x: 831, y: 840,  w: 91,  h: 137, rot: -5 },
+          tomato: { x: 598, y: 802,  w: 157, h: 157, rot: 0 },
+          ribbed: { x: 560, y: 1059, w: 163, h: 244, rot: 0 },
+          multi:  { x: 113, y: 1139, w: 201, h: 301, rot: 0 },
+          flower: { x: 98,  y: 541,  w: 94,  h: 141, rot: 6 }
+        }
+      };
+
+      function applyLayout(which) {
+        if (which === 'mobile') {
+          svg.setAttribute('viewBox', MOBILE.viewBox);
+          document.querySelector('.stage')?.style.setProperty('--scene-ar', MOBILE.aspect);
+          bg.setAttribute('href', MOBILE.bgHref);
+          bg.setAttribute('width', '1024');
+          bg.setAttribute('height', '1536');
+
+          setGeom(titleImg, MOBILE.geom.title);
+          setGeom(aboutImg, MOBILE.geom.about);
+          setGeom(svg.querySelector('#vase-green image'), MOBILE.geom.green);
+          setGeom(svg.querySelector('#vase-owl image'), MOBILE.geom.owl);
+          setGeom(svg.querySelector('#vase-tomato image'), MOBILE.geom.tomato);
+          setGeom(svg.querySelector('#vase-ribbed image'), MOBILE.geom.ribbed);
+          setGeom(svg.querySelector('#vase-mondrian image'), MOBILE.geom.multi);
+          setGeom(svg.querySelector('#vase-flower image'), MOBILE.geom.flower);
+        } else {
+          svg.setAttribute('viewBox', DESKTOP.viewBox);
+          document.querySelector('.stage')?.style.setProperty('--scene-ar', DESKTOP.aspect);
+          bg.setAttribute('href', DESKTOP.bgHref);
+          bg.setAttribute('width', '1536');
+          bg.setAttribute('height', '1024');
+
+          function restore(item, sel) {
+            const img = svg.querySelector(sel);
+            if (!img) return;
+            img.setAttribute('x', item.x);
+            img.setAttribute('y', item.y);
+            img.setAttribute('width', item.w);
+            img.setAttribute('height', item.h);
+            if (item.t) img.setAttribute('transform', item.t);
+            else img.removeAttribute('transform');
+          }
+
+          restore(DESKTOP.items.title, '#title image');
+          restore(DESKTOP.items.about, '#about-link image');
+          restore(DESKTOP.items.green, '#vase-green image');
+          restore(DESKTOP.items.owl, '#vase-owl image');
+          restore(DESKTOP.items.tomato, '#vase-tomato image');
+          restore(DESKTOP.items.ribbed, '#vase-ribbed image');
+          restore(DESKTOP.items.multi, '#vase-mondrian image');
+          restore(DESKTOP.items.flower, '#vase-flower image');
+        }
+
+        runTitleFit();
+      }
+
+      function runTitleFit() {
+        if (typeof window.fitTitleTo70 === 'function') {
+          window.fitTitleTo70();
+        }
+      }
+
+      const mq = window.matchMedia('(max-aspect-ratio: 9/16) and (max-width: 500px)');
+      const onChange = () => applyLayout(mq.matches ? 'mobile' : 'desktop');
+      if (typeof mq.addEventListener === 'function') mq.addEventListener('change', onChange);
+      else if (typeof mq.addListener === 'function') mq.addListener(onChange);
+
+      onChange();
+
+      window.addEventListener('resize', runTitleFit);
+      window.addEventListener('load', runTitleFit);
     })();
   </script>
 </body>
