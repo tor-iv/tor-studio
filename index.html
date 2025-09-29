@@ -15,7 +15,7 @@
       min-height: 100vh;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 16px 0;
+      padding: 0;
       background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
       -webkit-overflow-scrolling: touch;
     }
@@ -296,6 +296,19 @@
       <filter id="bubble-shadow" x="-20%" y="-30%" width="160%" height="200%">
         <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
       </filter>
+
+      <!-- Text shadow for readability with background -->
+      <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+        <feOffset in="blur" dx="0" dy="1" result="offsetBlur"/>
+        <feFlood flood-color="#000" flood-opacity="0.8" result="color"/>
+        <feComposite in="color" in2="offsetBlur" operator="in" result="shadow"/>
+        <feMerge>
+          <feMergeNode in="shadow"/>
+          <feMergeNode in="shadow"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
     </defs>
 
     <!-- Background painting -->
@@ -304,6 +317,10 @@
     <!-- Title / Logo -->
     <g id="title">
       <image href="images/tors-bored.png" x="511" y="0" width="384" height="256"/>
+      <!-- Subtitle note -->
+      <text id="subtitle" x="703" y="262" text-anchor="middle" font-family="Caveat, cursive" font-size="19" font-weight="700" fill="#f5f1e6" filter="url(#text-shadow)">
+        explore my projects by hover/clicking the vases i made
+      </text>
     </g>
 
     <!-- About sign linking to overlay -->
@@ -911,6 +928,7 @@
       };
 
       function applyLayout(which) {
+        const subtitle = svg.querySelector('#subtitle');
         if (which === 'mobile') {
           svg.setAttribute('viewBox', MOBILE.viewBox);
           document.querySelector('.stage')?.style.setProperty('--scene-ar', MOBILE.aspect);
@@ -926,6 +944,12 @@
           setGeom(svg.querySelector('#vase-ribbed image'), MOBILE.geom.ribbed);
           setGeom(svg.querySelector('#vase-mondrian image'), MOBILE.geom.multi);
           setGeom(svg.querySelector('#vase-flower image'), MOBILE.geom.flower);
+
+          // Position subtitle for mobile: centered at x: 314 + 364/2 = 496
+          if (subtitle) {
+            subtitle.setAttribute('x', '496');
+            subtitle.setAttribute('y', '305');
+          }
         } else {
           svg.setAttribute('viewBox', DESKTOP.viewBox);
           document.querySelector('.stage')?.style.setProperty('--scene-ar', DESKTOP.aspect);
@@ -952,6 +976,12 @@
           restore(DESKTOP.items.ribbed, '#vase-ribbed image');
           restore(DESKTOP.items.multi, '#vase-mondrian image');
           restore(DESKTOP.items.flower, '#vase-flower image');
+
+          // Position subtitle for desktop
+          if (subtitle) {
+            subtitle.setAttribute('x', '703');
+            subtitle.setAttribute('y', '262');
+          }
         }
 
         runTitleFit();

@@ -299,7 +299,7 @@
     </defs>
 
     <!-- Background painting -->
-    <image href="images/background.jpeg" x="0" y="0" width="1536" height="1024" preserveAspectRatio="none"/>
+    <image href="images/background.jpeg" x="0" y="0" width="1536" height="1024" preserveAspectRatio="xMidYMid slice"/>
 
     <!-- Title / Logo -->
     <g id="title">
@@ -878,12 +878,6 @@
           viewBox: '0 0 1536 1024',
           aspect: '1536/1024',
           bgHref: bg.getAttribute('href'),
-          bgGeom: {
-            x: +bg.getAttribute('x') || 0,
-            y: +bg.getAttribute('y') || 0,
-            w: +bg.getAttribute('width') || 1536,
-            h: +bg.getAttribute('height') || 1024
-          },
           items: {
             title: get('#title image'),
             about: get('#about-link image'),
@@ -901,8 +895,8 @@
 
       // Mobile (9:16) layout configuration
       const MOBILE = {
-        viewBox: '0 0 1152 2048',
-        aspect: '1152/2048',
+        viewBox: '0 0 1024 1536',
+        aspect: '1024/1536',
         bgHref: 'images/background-portrait.png',
         geom: {
           title:  { x: 314, y: 55,   w: 364, h: 242, rot: 0 },
@@ -921,10 +915,8 @@
           svg.setAttribute('viewBox', MOBILE.viewBox);
           document.querySelector('.stage')?.style.setProperty('--scene-ar', MOBILE.aspect);
           bg.setAttribute('href', MOBILE.bgHref);
-          bg.setAttribute('x', 0);
-          bg.setAttribute('y', 0);
-          bg.setAttribute('width', 1152);
-          bg.setAttribute('height', 2048);
+          bg.setAttribute('width', '1024');
+          bg.setAttribute('height', '1536');
 
           setGeom(titleImg, MOBILE.geom.title);
           setGeom(aboutImg, MOBILE.geom.about);
@@ -938,10 +930,8 @@
           svg.setAttribute('viewBox', DESKTOP.viewBox);
           document.querySelector('.stage')?.style.setProperty('--scene-ar', DESKTOP.aspect);
           bg.setAttribute('href', DESKTOP.bgHref);
-          bg.setAttribute('x', DESKTOP.bgGeom.x);
-          bg.setAttribute('y', DESKTOP.bgGeom.y);
-          bg.setAttribute('width', DESKTOP.bgGeom.w);
-          bg.setAttribute('height', DESKTOP.bgGeom.h);
+          bg.setAttribute('width', '1536');
+          bg.setAttribute('height', '1024');
 
           function restore(item, sel) {
             const img = svg.querySelector(sel);
