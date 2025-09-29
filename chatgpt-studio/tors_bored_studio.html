@@ -348,6 +348,7 @@
       </foreignObject>
     </g>
 
+
     <!-- Green Spiral Vase -->
     <g id="vase-green" class="vase" tabindex="0" role="button" aria-label="Green Spiral Vase" aria-expanded="false"
        data-title="Green Spiral Vase"
@@ -370,7 +371,10 @@
        data-title="Tor-Chinese"
        data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
        data-bubble-offset="96"
-       data-link="https://github.com/tor-iv/tor-chinese">
+       data-bubble-position="right"
+       data-bubble-offset-x="-10"
+       data-bubble-offset-y="-24"
+       data-preview-url="images/previews/tor-chinese.png">
       <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
     </g>
 
@@ -610,6 +614,7 @@
 
         // Determine which template to use based on bubble position
         const position = g.dataset.bubblePosition || 'top';
+        const customTemplate = g.dataset.bubbleTemplate || '';
         let templateToUse;
         switch(position) {
           case 'left':
@@ -631,15 +636,42 @@
         const body = g.dataset.body || '';
         b.querySelector('.title').textContent = title;
         b.querySelector('.body').textContent = body;
+        const previewUrl = g.dataset.previewUrl;
         const linkUrl = g.dataset.link;
-        if (linkUrl) {
-          const contentNode = b.querySelector('.bubble-content');
-          if (contentNode) {
+        const contentNode = b.querySelector('.bubble-content');
+        if (contentNode) {
+          const rect = b.querySelector('rect');
+          const tail = b.querySelector('path');
+          const foreignObject = b.querySelector('foreignObject');
+
+          if (previewUrl && rect && tail && foreignObject) {
+            rect.setAttribute('x', '20');
+            rect.setAttribute('y', '-210');
+            rect.setAttribute('width', '300');
+            rect.setAttribute('height', '240');
+            tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
+            foreignObject.setAttribute('x', '36');
+            foreignObject.setAttribute('y', '-198');
+            foreignObject.setAttribute('width', '268');
+            foreignObject.setAttribute('height', '220');
+
+            const image = document.createElement('img');
+            image.src = previewUrl;
+            image.alt = `${title || 'Project'} preview`;
+            image.loading = 'lazy';
+            image.style.width = '100%';
+            image.style.height = 'auto';
+            image.style.borderRadius = '14px';
+            image.style.marginTop = '6px';
+            contentNode.appendChild(image);
+          }
+
+          if (linkUrl) {
             const link = document.createElement('a');
             link.href = linkUrl;
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
-            link.textContent = 'View project →';
+            link.textContent = previewUrl ? 'View code →' : 'View project →';
             contentNode.appendChild(link);
           }
         }
@@ -647,20 +679,22 @@
         // Compute anchor based on position
         const bbox = g.getBBox();
         const offset = parseFloat(g.dataset.bubbleOffset || '56');
+        const offsetX = parseFloat(g.dataset.bubbleOffsetX || '0');
+        const offsetY = parseFloat(g.dataset.bubbleOffsetY || '0');
         let anchorX, anchorY;
 
         switch(position) {
           case 'left':
-            anchorX = bbox.x - 20;
-            anchorY = bbox.y + bbox.height / 2;
+            anchorX = bbox.x - 20 + offsetX;
+            anchorY = bbox.y + bbox.height / 2 + offsetY;
             break;
           case 'right':
-            anchorX = bbox.x + bbox.width + 20;
-            anchorY = bbox.y + bbox.height / 2;
+            anchorX = bbox.x + bbox.width + 20 + offsetX;
+            anchorY = bbox.y + bbox.height / 2 + offsetY;
             break;
           default:
-            anchorX = bbox.x + bbox.width / 2;
-            anchorY = bbox.y - offset;
+            anchorX = bbox.x + bbox.width / 2 + offsetX;
+            anchorY = bbox.y - offset + offsetY;
         }
 
         // Position by translating the whole bubble group
@@ -684,6 +718,7 @@
 
       // Event wiring per group
       groups.forEach(g => {
+        const bubbleLink = g.dataset.link;
         // Hover (desktop): open on enter, close on leave
         g.addEventListener('pointerenter', () => {
           closeOpenBubble();
@@ -698,6 +733,10 @@
         g.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
+            if (bubbleLink) {
+              window.open(bubbleLink, '_blank', 'noopener');
+              return;
+            }
             if (openBubble && openBubble.group === g) closeOpenBubble();
             else { closeOpenBubble(); placeBubbleForGroup(g); }
           }
@@ -707,6 +746,10 @@
         // Touch/click: toggle
         g.addEventListener('click', (e) => {
           e.stopPropagation();
+          if (bubbleLink) {
+            window.open(bubbleLink, '_blank', 'noopener');
+            return;
+          }
           if (openBubble && openBubble.group === g) closeOpenBubble();
           else { closeOpenBubble(); placeBubbleForGroup(g); }
         });
