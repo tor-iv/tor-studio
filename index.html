@@ -993,7 +993,7 @@
         }
       }
 
-      const mq = window.matchMedia('(max-aspect-ratio: 9/16) and (max-width: 500px)');
+      const mq = window.matchMedia('(max-aspect-ratio: 3/4)');
       const onChange = () => applyLayout(mq.matches ? 'mobile' : 'desktop');
       if (typeof mq.addEventListener === 'function') mq.addEventListener('change', onChange);
       else if (typeof mq.addListener === 'function') mq.addListener(onChange);
