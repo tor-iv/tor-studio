@@ -126,6 +126,8 @@
       color: #f4f4f4;
       font-size: 15px;
       text-decoration: none;
+      pointer-events: auto;
+      cursor: pointer;
     }
     .bubble-content a:hover,
     .bubble-content a:focus-visible {
@@ -379,10 +381,13 @@
 
 
     <!-- Green Spiral Vase -->
-    <g id="vase-green" class="vase" tabindex="0" role="button" aria-label="Green Spiral Vase" aria-expanded="false"
-       data-title="Green Spiral Vase"
-       data-body="Tall coil form, carved spirals, olive over ochre."
-       data-bubble-offset="56">
+    <g id="vase-green" class="vase" tabindex="0" role="button" aria-label="GoDo" aria-expanded="false"
+       data-title="GoDo"
+       data-body="GoDo solves the problem of sitting around wondering what to do by presenting swipeable activity recommendations that get you off the couch, then holds you accountable by automatically adding chosen events to your calendar."
+       data-bubble-offset="30"
+       data-bubble-width="340"
+       data-bubble-height="180"
+       data-link="https://github.com/tor-iv/godo">
       <image href="images/green-vase.png" x="400" y="349" width="242" height="363"/>
     </g>
 
@@ -403,7 +408,8 @@
        data-bubble-position="right"
        data-bubble-offset-x="-10"
        data-bubble-offset-y="-24"
-       data-preview-url="images/previews/tor-chinese.png">
+       data-preview-url="images/previews/tor-chinese.png"
+       data-link="https://github.com/tor-iv/tor-chinese">
       <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
     </g>
 
@@ -418,8 +424,11 @@
     <!-- Multicolor (Mondrian) -->
     <g id="vase-mondrian" class="vase" tabindex="0" role="button" aria-label="Multicolor Vase"
        data-title="Multicolor Vase"
-       data-body="Playful color blocks over warm porcelain."
-       data-bubble-offset="72">
+       data-body="A online marketplace for showcasing and selling handmade pottery through live auctions, with a built-in commission request system for custom pieces or just ideas for me to make"
+       data-bubble-offset="72"
+       data-bubble-width="340"
+       data-bubble-height="180"
+       data-link="https://github.com/tor-iv/tors-bored">
       <image href="images/multicolor-vase.png" x="239" y="783" width="161" height="241"/>
     </g>
 
@@ -642,8 +651,15 @@
   const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
   let openBubble = null; // { group, bubble }
+  let closeTimeout = null;
 
   function placeBubbleForGroup(g) {
+    // Cancel any pending close
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      closeTimeout = null;
+    }
+
     const old = g.querySelector('.bubble.open');
     if (old && old !== template && old !== templateLeft && old !== templateRight) old.remove();
 
@@ -665,6 +681,26 @@
     const contentNode = b.querySelector('.bubble-content');
     const previewUrl = g.dataset.previewUrl;
     const linkUrl = g.dataset.link;
+    const bubbleWidth = g.dataset.bubbleWidth;
+    const bubbleHeight = g.dataset.bubbleHeight;
+
+    // Custom bubble size for large text
+    if (bubbleWidth && bubbleHeight && rect && foreignObject) {
+      const w = parseFloat(bubbleWidth);
+      const h = parseFloat(bubbleHeight);
+      rect.setAttribute('x', -w/2);
+      rect.setAttribute('y', -h - 10);
+      rect.setAttribute('width', w);
+      rect.setAttribute('height', h);
+      foreignObject.setAttribute('x', -w/2 + 10);
+      foreignObject.setAttribute('y', -h);
+      foreignObject.setAttribute('width', w - 20);
+      foreignObject.setAttribute('height', h - 10);
+
+      // Smaller font for long text
+      const bodyEl = contentNode.querySelector('.body');
+      if (bodyEl) bodyEl.style.fontSize = '15px';
+    }
 
     if (previewUrl && rect && tail && foreignObject && contentNode) {
       rect.setAttribute('x', '20');
@@ -694,6 +730,10 @@
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.textContent = previewUrl ? 'View code →' : 'View project →';
+      link.style.pointerEvents = 'auto';
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
       contentNode.appendChild(link);
     }
 
@@ -716,17 +756,39 @@
 
     b.setAttribute('transform', `translate(${ax}, ${ay})`);
 
+    // Keep bubble open when hovering over it
+    if (canHover) {
+      b.addEventListener('pointerenter', () => {
+        if (closeTimeout) {
+          clearTimeout(closeTimeout);
+          closeTimeout = null;
+        }
+      });
+      b.addEventListener('pointerleave', () => {
+        closeOpenBubbleDelayed();
+      });
+    }
+
     g.appendChild(b);
     g.setAttribute('aria-expanded', 'true');
     openBubble = { group: g, bubble: b };
   }
 
   function closeOpenBubble() {
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      closeTimeout = null;
+    }
     if (!openBubble) return;
     const { group, bubble } = openBubble;
     if (bubble && bubble.parentNode) bubble.parentNode.removeChild(bubble);
     if (group) group.setAttribute('aria-expanded', 'false');
     openBubble = null;
+  }
+
+  function closeOpenBubbleDelayed() {
+    if (closeTimeout) clearTimeout(closeTimeout);
+    closeTimeout = setTimeout(closeOpenBubble, 200);
   }
 
   groups.forEach(g => {
@@ -745,7 +807,7 @@
         placeBubbleForGroup(g);
       });
       g.addEventListener('pointerleave', () => {
-        if (openBubble && openBubble.group === g) closeOpenBubble();
+        if (openBubble && openBubble.group === g) closeOpenBubbleDelayed();
       });
     } else {
       g.addEventListener('click', (e) => {
