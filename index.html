@@ -79,7 +79,11 @@
 
     /* Thought bubbles */
     .bubble { display: none; }
-    .bubble.open { display: block; }
+    .bubble.open {
+      display: block;
+      z-index: 9999;
+      position: relative;
+    }
 
     /* Bubble text styling */
     .bubble text { font-family: ui-serif, Georgia, "Times New Roman", serif; font-size: 18px; fill: #1b1b1b; }
@@ -114,6 +118,16 @@
       font-size: 18px;
       line-height: 1.3;
       word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    @media (max-width: 768px) {
+      .bubble-content .title {
+        font-size: 18px;
+      }
+      .bubble-content .body {
+        font-size: 16px;
+        line-height: 1.25;
+      }
     }
     .bubble-content a {
       display: inline-flex;
@@ -573,7 +587,8 @@
 
       wrap.addEventListener('touchmove', (event) => {
         if (!hasHorizontalOverflow()) return;
-        if (event.target.closest('a, button, .vase')) return;
+        // Allow scrolling even over vases, but not over links/buttons
+        if (event.target.closest('a, button')) return;
         const touch = event.touches[0];
         const dx = touch.clientX - touchStartX;
         const dy = touch.clientY - touchStartY;
