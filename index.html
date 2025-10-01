@@ -699,23 +699,6 @@
       // Smaller font for long text
       const bodyEl = contentNode.querySelector('.body');
       if (bodyEl) bodyEl.style.fontSize = '15px';
-
-      // Add link for custom bubble (non-preview)
-      if (linkUrl) {
-        const link = document.createElement('a');
-        link.href = linkUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = 'View project →';
-        link.style.pointerEvents = 'auto';
-        link.style.cursor = 'pointer';
-        link.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          window.open(linkUrl, '_blank', 'noopener,noreferrer');
-        });
-        contentNode.appendChild(link);
-      }
     }
 
     if (previewUrl && rect && tail && foreignObject && contentNode) {
@@ -740,6 +723,7 @@
       contentNode.appendChild(image);
     }
 
+    // Add link button (only once, at the end)
     if (linkUrl && contentNode) {
       const link = document.createElement('a');
       link.href = linkUrl;
