@@ -45,7 +45,7 @@
     @media (max-aspect-ratio: 3/2) {
       .stage {
         width: auto;
-        height: max(120vh, 120dvh, 120svh);
+        height: max(100vh, 100dvh, 100svh);
       }
     }
 
@@ -423,7 +423,7 @@
 
     <!-- Multicolor (Mondrian) -->
     <g id="vase-mondrian" class="vase" tabindex="0" role="button" aria-label="Multicolor Vase"
-       data-title="Multicolor Vase"
+       data-title="Tor-Bored Marketplace"
        data-body="A online marketplace for showcasing and selling handmade pottery through live auctions, with a built-in commission request system for custom pieces or just ideas for me to make"
        data-bubble-offset="72"
        data-bubble-width="340"
@@ -532,7 +532,6 @@
       }
 
       window.addEventListener('load', centerScene);
-      window.addEventListener('resize', centerScene);
 
       let isMouseDown = false;
       let startX = 0;
@@ -700,18 +699,35 @@
       // Smaller font for long text
       const bodyEl = contentNode.querySelector('.body');
       if (bodyEl) bodyEl.style.fontSize = '15px';
+
+      // Add link for custom bubble (non-preview)
+      if (linkUrl) {
+        const link = document.createElement('a');
+        link.href = linkUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'View project →';
+        link.style.pointerEvents = 'auto';
+        link.style.cursor = 'pointer';
+        link.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(linkUrl, '_blank', 'noopener,noreferrer');
+        });
+        contentNode.appendChild(link);
+      }
     }
 
     if (previewUrl && rect && tail && foreignObject && contentNode) {
       rect.setAttribute('x', '20');
-      rect.setAttribute('y', '-210');
+      rect.setAttribute('y', '-250');
       rect.setAttribute('width', '300');
-      rect.setAttribute('height', '240');
+      rect.setAttribute('height', '280');
       tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
       foreignObject.setAttribute('x', '36');
-      foreignObject.setAttribute('y', '-198');
+      foreignObject.setAttribute('y', '-238');
       foreignObject.setAttribute('width', '268');
-      foreignObject.setAttribute('height', '220');
+      foreignObject.setAttribute('height', '260');
 
       const image = document.createElement('img');
       image.src = previewUrl;
@@ -731,8 +747,11 @@
       link.rel = 'noopener noreferrer';
       link.textContent = previewUrl ? 'View code →' : 'View project →';
       link.style.pointerEvents = 'auto';
-      link.addEventListener('click', (e) => {
+      link.style.cursor = 'pointer';
+      link.addEventListener('mousedown', (e) => {
+        e.preventDefault();
         e.stopPropagation();
+        window.open(linkUrl, '_blank', 'noopener,noreferrer');
       });
       contentNode.appendChild(link);
     }
@@ -799,6 +818,16 @@
         else { closeOpenBubble(); placeBubbleForGroup(g); }
       }
       if (e.key === 'Escape') closeOpenBubble();
+    });
+
+    // Double-click to open link in new tab
+    g.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const linkUrl = g.dataset.link;
+      if (linkUrl) {
+        window.open(linkUrl, '_blank', 'noopener,noreferrer');
+      }
     });
 
     if (canHover) {
