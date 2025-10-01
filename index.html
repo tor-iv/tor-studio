@@ -398,9 +398,11 @@
     <g id="vase-green" class="vase" tabindex="0" role="button" aria-label="GoDo" aria-expanded="false"
        data-title="GoDo"
        data-body="GoDo solves the problem of sitting around wondering what to do by presenting swipeable activity recommendations that get you off the couch, then holds you accountable by automatically adding chosen events to your calendar."
-       data-bubble-offset="30"
-       data-bubble-width="340"
-       data-bubble-height="180"
+       data-bubble-offset="96"
+       data-bubble-position="right"
+       data-bubble-offset-x="-10"
+       data-bubble-offset-y="-24"
+       data-preview-url="images/previews/godo-preview.png"
        data-link="https://github.com/tor-iv/godo">
       <image href="images/green-vase.png" x="400" y="349" width="242" height="363"/>
     </g>
@@ -741,17 +743,36 @@
         bodyEl.style.lineHeight = '1.25';
       }
 
-      const image = document.createElement('img');
-      image.src = previewUrl;
-      image.alt = `${title || 'Project'} preview`;
-      image.loading = 'lazy';
-      image.style.width = '100%';
-      image.style.height = 'auto';
-      image.style.maxHeight = '140px';
-      image.style.objectFit = 'cover';
-      image.style.borderRadius = '14px';
-      image.style.marginTop = '4px';
-      contentNode.appendChild(image);
+      // Check if preview is video or image
+      const isVideo = previewUrl.endsWith('.mov') || previewUrl.endsWith('.mp4') || previewUrl.endsWith('.webm');
+
+      if (isVideo) {
+        const video = document.createElement('video');
+        video.src = previewUrl;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.style.width = '100%';
+        video.style.height = 'auto';
+        video.style.maxHeight = '140px';
+        video.style.objectFit = 'cover';
+        video.style.borderRadius = '14px';
+        video.style.marginTop = '4px';
+        contentNode.appendChild(video);
+      } else {
+        const image = document.createElement('img');
+        image.src = previewUrl;
+        image.alt = `${title || 'Project'} preview`;
+        image.loading = 'lazy';
+        image.style.width = '100%';
+        image.style.height = 'auto';
+        image.style.maxHeight = '140px';
+        image.style.objectFit = 'cover';
+        image.style.borderRadius = '14px';
+        image.style.marginTop = '4px';
+        contentNode.appendChild(image);
+      }
     }
 
     // Add link button (only once, at the end)
