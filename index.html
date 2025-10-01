@@ -428,10 +428,15 @@
     </g>
 
     <!-- White Tall Ribbed -->
-    <g id="vase-ribbed" class="vase" tabindex="0" role="button" aria-label="White Tall Ribbed" aria-expanded="false"
-       data-title="White Tall"
-       data-body="Thrown, altered; speckled clay, satin eggshell."
-       data-bubble-offset="72">
+    <g id="vase-ribbed" class="vase" tabindex="0" role="button" aria-label="Beli Clone" aria-expanded="false"
+       data-title="Beli-Clone"
+       data-body="I wanted to explore how I could enhance the features and interactions of an app that's part of my everyday routine—combining practical frontend development practice while improving the product."
+       data-bubble-offset="96"
+       data-bubble-position="right"
+       data-bubble-offset-x="-10"
+       data-bubble-offset-y="-24"
+       data-preview-url="images/previews/beli-preview.png"
+       data-link="https://github.com/tor-iv/beli-app">
       <image href="images/white-rib-vase.png" x="664" y="765" width="139" height="209"/>
     </g>
 
@@ -718,14 +723,23 @@
 
     if (previewUrl && rect && tail && foreignObject && contentNode) {
       rect.setAttribute('x', '20');
-      rect.setAttribute('y', '-250');
-      rect.setAttribute('width', '300');
-      rect.setAttribute('height', '280');
+      rect.setAttribute('y', '-310');
+      rect.setAttribute('width', '320');
+      rect.setAttribute('height', '340');
       tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
       foreignObject.setAttribute('x', '36');
-      foreignObject.setAttribute('y', '-238');
-      foreignObject.setAttribute('width', '268');
-      foreignObject.setAttribute('height', '260');
+      foreignObject.setAttribute('y', '-298');
+      foreignObject.setAttribute('width', '288');
+      foreignObject.setAttribute('height', '320');
+
+      // Responsive text sizing
+      const titleEl = contentNode.querySelector('.title');
+      const bodyEl = contentNode.querySelector('.body');
+      if (titleEl) titleEl.style.fontSize = '18px';
+      if (bodyEl) {
+        bodyEl.style.fontSize = '15px';
+        bodyEl.style.lineHeight = '1.25';
+      }
 
       const image = document.createElement('img');
       image.src = previewUrl;
@@ -733,8 +747,10 @@
       image.loading = 'lazy';
       image.style.width = '100%';
       image.style.height = 'auto';
+      image.style.maxHeight = '140px';
+      image.style.objectFit = 'cover';
       image.style.borderRadius = '14px';
-      image.style.marginTop = '6px';
+      image.style.marginTop = '4px';
       contentNode.appendChild(image);
     }
 
