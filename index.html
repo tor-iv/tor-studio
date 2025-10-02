@@ -64,7 +64,6 @@
         max-width: none;
         min-height: 100vh;
       }
-      #title { display: none; }
     }
 
     /* Interaction affordances */
@@ -653,7 +652,8 @@
 
         const vb = svg.viewBox.baseVal || { width: 1536 };
         const vbWidth = vb && vb.width ? vb.width : 1536;
-        const safeWidth = sceneRect.width * 0.7;
+        const isTallMobile = window.matchMedia('(max-aspect-ratio: 3/4)').matches;
+        const safeWidth = sceneRect.width * (isTallMobile ? 0.88 : 0.7);
         const width = parseFloat(titleImage.getAttribute('width') || '0');
         const height = parseFloat(titleImage.getAttribute('height') || '0');
         const x = parseFloat(titleImage.getAttribute('x') || '0');
@@ -670,7 +670,12 @@
 
         const cx = x + width / 2;
         const cy = y + height / 2;
-        title.setAttribute('transform', `translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})`);
+        const offsetX = isTallMobile ? (vbWidth / 2 - cx) : 0;
+        const offsetY = isTallMobile ? Math.max(0, 40 - y) : 0;
+        const transforms = [];
+        if (offsetX || offsetY) transforms.push(`translate(${offsetX} ${offsetY})`);
+        transforms.push(`translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})`);
+        title.setAttribute('transform', transforms.join(' '));
       }
 
       window.fitTitleTo70 = fitTitleTo70;
