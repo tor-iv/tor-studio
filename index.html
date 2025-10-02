@@ -425,23 +425,14 @@
       <image href="images/green-vase.png" x="400" y="349" width="242" height="363"/>
     </g>
 
-    <!-- Owl (Fnoobie) -->
-    <g id="vase-owl" class="vase" tabindex="0" role="button" aria-label="Owl Vase" aria-expanded="false"
-       data-title="Owl Vase (Fnoobie)"
-       data-body="Textured stoneware, butter glaze; cozy night light."
-       data-bubble-offset="56"
-       data-bubble-position="left">
-      <image href="images/fnoobie.png" x="1351" y="525" width="126" height="189" transform="rotate(5 1414 613.5)"/>
-    </g>
-
     <!-- White Tall Ribbed -->
     <g id="vase-ribbed" class="vase" tabindex="0" role="button" aria-label="Beli Clone" aria-expanded="false"
        data-title="Beli-Clone"
        data-body="I wanted to explore how I could enhance the features and interactions of an app that's part of my everyday routine—combining practical frontend development practice while improving the product."
-       data-bubble-offset="96"
-       data-bubble-position="left"
-       data-bubble-offset-x="-10"
-       data-bubble-offset-y="-24"
+       data-bubble-offset="38"
+       data-bubble-width="360"
+       data-bubble-height="420"
+       data-bubble-layout="stacked"
        data-preview-url="images/previews/beli-preview.png"
        data-link="https://github.com/tor-iv/beli-app">
       <image href="images/white-rib-vase.png" x="664" y="765" width="139" height="209"/>
@@ -451,11 +442,22 @@
     <g id="vase-tomato" class="vase" tabindex="0" role="button" aria-label="Tomato Jar" aria-expanded="false"
        data-title="Tor-Chinese"
        data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
-       data-bubble-offset="56"
-       data-bubble-position="top"
+       data-bubble-offset="40"
+       data-bubble-width="360"
+       data-bubble-height="320"
+       data-bubble-layout="stacked"
        data-preview-url="images/previews/tor-chinese.png"
        data-link="https://github.com/tor-iv/tor-chinese">
       <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
+    </g>
+
+    <!-- Owl (Fnoobie) -->
+    <g id="vase-owl" class="vase" tabindex="0" role="button" aria-label="Owl Vase" aria-expanded="false"
+       data-title="Owl Vase (Fnoobie)"
+       data-body="Textured stoneware, butter glaze; cozy night light."
+       data-bubble-offset="56"
+       data-bubble-position="left">
+      <image href="images/fnoobie.png" x="1351" y="525" width="126" height="189" transform="rotate(5 1414 613.5)"/>
     </g>
 
     <!-- Multicolor (Mondrian) -->
@@ -725,46 +727,85 @@
     const linkUrl = g.dataset.link;
     const bubbleWidth = g.dataset.bubbleWidth;
     const bubbleHeight = g.dataset.bubbleHeight;
+    const bubbleLayout = (g.dataset.bubbleLayout || '').toLowerCase();
+    const isRibbed = g.id === 'vase-ribbed';
 
-    // Custom bubble size for large text
-    if (bubbleWidth && bubbleHeight && rect && foreignObject) {
+    // Custom bubble size for large text on standard layout
+    if (bubbleLayout !== 'stacked' && bubbleWidth && bubbleHeight && rect && foreignObject) {
       const w = parseFloat(bubbleWidth);
       const h = parseFloat(bubbleHeight);
-      rect.setAttribute('x', -w/2);
+      rect.setAttribute('x', -w / 2);
       rect.setAttribute('y', -h - 10);
       rect.setAttribute('width', w);
       rect.setAttribute('height', h);
-      foreignObject.setAttribute('x', -w/2 + 10);
+      foreignObject.setAttribute('x', -w / 2 + 10);
       foreignObject.setAttribute('y', -h);
       foreignObject.setAttribute('width', w - 20);
       foreignObject.setAttribute('height', h - 10);
 
-      // Smaller font for long text
       const bodyEl = contentNode.querySelector('.body');
       if (bodyEl) bodyEl.style.fontSize = '15px';
     }
 
-    if (previewUrl && rect && tail && foreignObject && contentNode) {
-      rect.setAttribute('x', '20');
-      rect.setAttribute('y', '-310');
-      rect.setAttribute('width', '320');
-      rect.setAttribute('height', '340');
-      tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
-      foreignObject.setAttribute('x', '36');
-      foreignObject.setAttribute('y', '-298');
-      foreignObject.setAttribute('width', '288');
-      foreignObject.setAttribute('height', '320');
+    let stackedEffectiveHeight = null;
 
-      // Responsive text sizing
+    if (previewUrl && rect && tail && foreignObject && contentNode) {
       const titleEl = contentNode.querySelector('.title');
       const bodyEl = contentNode.querySelector('.body');
-      if (titleEl) titleEl.style.fontSize = '18px';
-      if (bodyEl) {
-        bodyEl.style.fontSize = '15px';
-        bodyEl.style.lineHeight = '1.25';
+
+      if (bubbleLayout === 'stacked') {
+        const pointerHeight = 20;
+        const widthVal = parseFloat(bubbleWidth || '320');
+        const heightVal = parseFloat(bubbleHeight || '320');
+        const effectiveWidth = Math.max(widthVal, 300);
+        stackedEffectiveHeight = Math.max(heightVal, 280);
+        const rectX = -effectiveWidth / 2;
+        const rectY = -(stackedEffectiveHeight + pointerHeight + 4);
+
+        rect.setAttribute('x', rectX);
+        rect.setAttribute('y', rectY);
+        rect.setAttribute('width', effectiveWidth);
+        rect.setAttribute('height', stackedEffectiveHeight);
+
+        foreignObject.setAttribute('x', rectX + 12);
+        foreignObject.setAttribute('y', rectY + 12);
+        foreignObject.setAttribute('width', effectiveWidth - 24);
+        foreignObject.setAttribute('height', stackedEffectiveHeight - 24);
+
+        tail.setAttribute('d', `M 0 ${pointerHeight} L -18 0 L 18 0 Z`);
+        tail.setAttribute('transform', `translate(0, ${rectY + stackedEffectiveHeight})`);
+
+        if (titleEl) titleEl.style.fontSize = '20px';
+        if (bodyEl) {
+          bodyEl.style.fontSize = '16px';
+          bodyEl.style.lineHeight = '1.32';
+        }
+      } else {
+        tail.removeAttribute('transform');
+        rect.setAttribute('x', '20');
+        rect.setAttribute('y', '-310');
+        rect.setAttribute('width', '320');
+        rect.setAttribute('height', '340');
+        tail.setAttribute('d', 'M 0 0 L 24 -22 L 24 22 Z');
+        foreignObject.setAttribute('x', '36');
+        foreignObject.setAttribute('y', '-298');
+        foreignObject.setAttribute('width', '288');
+        foreignObject.setAttribute('height', '320');
+
+        if (titleEl) titleEl.style.fontSize = '18px';
+        if (bodyEl) {
+          bodyEl.style.fontSize = '15px';
+          bodyEl.style.lineHeight = '1.25';
+        }
       }
 
-      // Check if preview is video or image
+      let mediaMaxHeightValue = 140;
+      if (bubbleLayout === 'stacked') {
+        const baseHeight = Math.max(160, (stackedEffectiveHeight || parseFloat(bubbleHeight) || 320) - 140);
+        mediaMaxHeightValue = isRibbed ? Math.min(baseHeight, 210) : baseHeight;
+      }
+      const mediaMaxHeight = `${mediaMaxHeightValue}px`;
+
       const isVideo = previewUrl.endsWith('.mov') || previewUrl.endsWith('.mp4') || previewUrl.endsWith('.webm');
 
       if (isVideo) {
@@ -776,7 +817,7 @@
         video.playsInline = true;
         video.style.width = '100%';
         video.style.height = 'auto';
-        video.style.maxHeight = '140px';
+        video.style.maxHeight = mediaMaxHeight;
         video.style.objectFit = 'cover';
         video.style.borderRadius = '14px';
         video.style.marginTop = '4px';
@@ -788,7 +829,7 @@
         image.loading = 'lazy';
         image.style.width = '100%';
         image.style.height = 'auto';
-        image.style.maxHeight = '140px';
+        image.style.maxHeight = mediaMaxHeight;
         image.style.objectFit = 'cover';
         image.style.borderRadius = '14px';
         image.style.marginTop = '4px';
@@ -846,6 +887,21 @@
     }
 
     g.appendChild(b);
+
+    const parentGroup = g.parentNode;
+    if (parentGroup) {
+      if (g.id === 'vase-ribbed') {
+        parentGroup.appendChild(g);
+      } else if (g.id === 'vase-tomato') {
+        const ribbedGroup = svg.querySelector('#vase-ribbed');
+        if (ribbedGroup && ribbedGroup.parentNode) {
+          ribbedGroup.parentNode.appendChild(ribbedGroup);
+        }
+      } else if (parentGroup.lastElementChild !== g) {
+        parentGroup.appendChild(g);
+      }
+    }
+
     g.setAttribute('aria-expanded', 'true');
     openBubble = { group: g, bubble: b };
   }
