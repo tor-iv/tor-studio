@@ -15,7 +15,7 @@
       margin: 0;
       min-height: 100vh;
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: auto;
       padding: 0;
       background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
       -webkit-overflow-scrolling: touch;
@@ -27,7 +27,7 @@
       width: 100vw;
       margin: 0 auto;
       overflow-x: auto;
-      overflow-y: visible;
+      overflow-y: auto;
       scroll-behavior: smooth;
       cursor: grab;
     }
@@ -51,20 +51,20 @@
     }
     @media (max-aspect-ratio: 3/4) {
       .stage-wrap {
-        overflow-x: hidden;
-        overflow-y: visible;
+        overflow-x: auto;
+        overflow-y: auto;
         cursor: default;
         min-height: 100vh;
-        display: flex;
-        align-items: center;
+        display: block;
       }
       .stage-wrap:active { cursor: default; }
       .stage {
-        width: 100vw;
+        width: auto;
         height: auto;
-        max-width: 100%;
+        max-width: none;
         min-height: 100vh;
       }
+      #title { display: none; }
     }
 
     /* Interaction affordances */
