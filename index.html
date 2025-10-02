@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tors‑Bored Studio — Interactive Gallery</title>
+  <link rel="icon" type="image/png" href="images/green-vase.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
@@ -53,12 +54,16 @@
         overflow-x: hidden;
         overflow-y: visible;
         cursor: default;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
       }
       .stage-wrap:active { cursor: default; }
       .stage {
         width: 100vw;
         height: auto;
         max-width: 100%;
+        min-height: 100vh;
       }
     }
 
@@ -429,30 +434,28 @@
       <image href="images/fnoobie.png" x="1351" y="525" width="126" height="189" transform="rotate(5 1414 613.5)"/>
     </g>
 
-    <!-- Tomato Jar -->
-    <g id="vase-tomato" class="vase" tabindex="0" role="button" aria-label="Tomato Jar" aria-expanded="false"
-       data-title="Tor-Chinese"
-       data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
-       data-bubble-offset="96"
-       data-bubble-position="right"
-       data-bubble-offset-x="-10"
-       data-bubble-offset-y="-24"
-       data-preview-url="images/previews/tor-chinese.png"
-       data-link="https://github.com/tor-iv/tor-chinese">
-      <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
-    </g>
-
     <!-- White Tall Ribbed -->
     <g id="vase-ribbed" class="vase" tabindex="0" role="button" aria-label="Beli Clone" aria-expanded="false"
        data-title="Beli-Clone"
        data-body="I wanted to explore how I could enhance the features and interactions of an app that's part of my everyday routine—combining practical frontend development practice while improving the product."
        data-bubble-offset="96"
-       data-bubble-position="right"
+       data-bubble-position="left"
        data-bubble-offset-x="-10"
        data-bubble-offset-y="-24"
        data-preview-url="images/previews/beli-preview.png"
        data-link="https://github.com/tor-iv/beli-app">
       <image href="images/white-rib-vase.png" x="664" y="765" width="139" height="209"/>
+    </g>
+
+    <!-- Tomato Jar -->
+    <g id="vase-tomato" class="vase" tabindex="0" role="button" aria-label="Tomato Jar" aria-expanded="false"
+       data-title="Tor-Chinese"
+       data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
+       data-bubble-offset="56"
+       data-bubble-position="top"
+       data-preview-url="images/previews/tor-chinese.png"
+       data-link="https://github.com/tor-iv/tor-chinese">
+      <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
     </g>
 
     <!-- Multicolor (Mondrian) -->
