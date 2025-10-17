@@ -406,7 +406,7 @@
     <g id="title">
       <image href="images/tors-bored.png" x="511" y="0" width="384" height="256"/>
       <!-- Subtitle note -->
-      <text id="subtitle" x="703" y="262" text-anchor="middle" font-family="Caveat, cursive" font-size="19" font-weight="700" fill="#f5f1e6" filter="url(#text-shadow)">
+      <text id="subtitle" x="703" y="262" text-anchor="middle" font-family="Caveat, cursive" font-size="24" font-weight="700" fill="#f5f1e6" filter="url(#text-shadow)">
         explore my projects by hover/clicking the vases i made
       </text>
     </g>
@@ -525,12 +525,15 @@
       <image href="images/multicolor-vase.png" x="239" y="783" width="161" height="241"/>
     </g>
 
-    <!-- Flower Vase -->
-    <g id="vase-flower" class="vase" tabindex="0" role="button" aria-label="Flower Vase" aria-expanded="false"
-       data-title="Flower Vase"
-       data-body="Soft blossoms over matte ivory; spring in a vessel."
+    <!-- Burn Jameson Whiskey Campaign -->
+    <g id="vase-flower" class="vase" tabindex="0" role="button" aria-label="Burn Jameson" aria-expanded="false"
+       data-title="Try Keeper's Heart"
+       data-body="A marketing campaign for Keeper's Heart Whiskey allowing users to 'burn' the competition—scan competitor bottles, verify receipts, and receive PayPal rebates. Built with Gemini AI, Google Vision, Supabase, and Vercel."
        data-bubble-offset="56"
-       data-bubble-position="right">
+       data-bubble-width="360"
+       data-bubble-height="200"
+       data-bubble-position="right"
+       data-link="https://burn-jameson.vercel.app">
       <image href="images/white-flower.png" x="30.9" y="515" width="90" height="139" transform="rotate(-6 74.9 577.97)"/>
     </g>
 
@@ -794,14 +797,52 @@
     if (bubbleLayout !== 'stacked' && bubbleWidth && bubbleHeight && rect && foreignObject) {
       const w = parseFloat(bubbleWidth);
       const h = parseFloat(bubbleHeight);
-      rect.setAttribute('x', -w / 2);
-      rect.setAttribute('y', -h - 10);
-      rect.setAttribute('width', w);
-      rect.setAttribute('height', h);
-      foreignObject.setAttribute('x', -w / 2 + 10);
-      foreignObject.setAttribute('y', -h);
-      foreignObject.setAttribute('width', w - 20);
-      foreignObject.setAttribute('height', h - 10);
+
+      if (position === 'right') {
+        // For right bubbles: arrow at x=0, bubble starts after arrow
+        const arrowWidth = 10; // width of the tail arrow
+        const spacing = 10; // gap between arrow and bubble
+
+        rect.setAttribute('x', arrowWidth + spacing);
+        rect.setAttribute('y', -h / 2);
+        rect.setAttribute('width', w);
+        rect.setAttribute('height', h);
+
+        foreignObject.setAttribute('x', arrowWidth + spacing + 10);
+        foreignObject.setAttribute('y', -h / 2 + 10);
+        foreignObject.setAttribute('width', w - 20);
+        foreignObject.setAttribute('height', h - 20);
+
+        // Reposition tail to point at vase center vertically
+        tail.setAttribute('d', 'M 0 0 L 10 -10 L 10 10 Z');
+      } else if (position === 'left') {
+        // For left bubbles: arrow at x=0, bubble ends before arrow
+        const arrowWidth = 10; // width of the tail arrow
+        const spacing = 10; // gap between bubble and arrow
+
+        rect.setAttribute('x', -(arrowWidth + spacing + w));
+        rect.setAttribute('y', -h / 2);
+        rect.setAttribute('width', w);
+        rect.setAttribute('height', h);
+
+        foreignObject.setAttribute('x', -(arrowWidth + spacing + w) + 10);
+        foreignObject.setAttribute('y', -h / 2 + 10);
+        foreignObject.setAttribute('width', w - 20);
+        foreignObject.setAttribute('height', h - 20);
+
+        // Reposition tail to point at vase center vertically
+        tail.setAttribute('d', 'M 0 0 L -10 -10 L -10 10 Z');
+      } else {
+        // Existing top/default bubble centering logic
+        rect.setAttribute('x', -w / 2);
+        rect.setAttribute('y', -h - 10);
+        rect.setAttribute('width', w);
+        rect.setAttribute('height', h);
+        foreignObject.setAttribute('x', -w / 2 + 10);
+        foreignObject.setAttribute('y', -h);
+        foreignObject.setAttribute('width', w - 20);
+        foreignObject.setAttribute('height', h - 10);
+      }
 
       const bodyEl = contentNode.querySelector('.body');
       if (bodyEl) bodyEl.style.fontSize = '15px';
