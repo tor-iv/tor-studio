@@ -19,6 +19,7 @@
       padding: 0;
       background: radial-gradient(60% 80% at 50% 40%, #1d2b23 0%, #0f1512 100%);
       -webkit-overflow-scrolling: touch;
+      cursor: url('images/cursor-default.svg') 4 4, auto;
     }
 
     /* Responsive SVG container: keep full painting visible without crop */
@@ -29,9 +30,9 @@
       overflow-x: auto;
       overflow-y: auto;
       scroll-behavior: smooth;
-      cursor: grab;
+      cursor: url('images/cursor-grab.svg') 16 16, grab;
     }
-    .stage-wrap:active { cursor: grabbing; }
+    .stage-wrap:active { cursor: url('images/cursor-grabbing.svg') 16 16, grabbing; }
     .stage {
       display: block;
       width: 100vw;
@@ -68,7 +69,7 @@
 
     /* Interaction affordances */
     .vase {
-      cursor: pointer;
+      cursor: url('images/cursor-pointer.svg') 16 16, pointer;
       outline: none;
       /* Enable CSS transforms to respect the element box */
       transform-box: fill-box; /* critical for SVG */
@@ -83,6 +84,9 @@
     }
     .vase, .vase image { pointer-events: auto; }
 
+    #about-link {
+      cursor: url('images/cursor-pointer.svg') 16 16, pointer;
+    }
     #about-link image {
       transform-box: fill-box;
       transform-origin: center;
@@ -158,7 +162,7 @@
       font-size: 15px;
       text-decoration: none;
       pointer-events: auto;
-      cursor: pointer;
+      cursor: url('images/cursor-pointer.svg') 16 16, pointer;
     }
     .bubble-content a:hover,
     .bubble-content a:focus-visible {
@@ -204,7 +208,7 @@
       font-size: 28px;
       line-height: 1;
       color: #4b4233;
-      cursor: pointer;
+      cursor: url('images/cursor-pointer.svg') 16 16, pointer;
     }
     .panel .head { margin-bottom: 12px; }
     .panel .head h2 {
@@ -293,7 +297,7 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.18);
       color: #2a2119;
       font-size: 22px;
-      cursor: pointer;
+      cursor: url('images/cursor-pointer.svg') 16 16, pointer;
       transition: transform 140ms ease, box-shadow 140ms ease;
     }
     @media (max-width: 768px) {
