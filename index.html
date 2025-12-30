@@ -471,15 +471,16 @@
 
 
     <!-- Green Spiral Vase -->
-    <g id="vase-green" class="vase" tabindex="0" role="button" aria-label="GoDo" aria-expanded="false"
-       data-title="GoDo"
-       data-body="GoDo solves the problem of sitting around wondering what to do by presenting swipeable activity recommendations that get you off the couch, then holds you accountable by automatically adding chosen events to your calendar."
+    <g id="vase-green" class="vase" tabindex="0" role="button" aria-label="Try Keeper's Heart" aria-expanded="false"
+       data-title="Try Keeper's Heart"
+       data-body="A marketing campaign for Keeper's Heart Whiskey allowing users to 'burn' the competition—scan competitor bottles, verify receipts, and receive PayPal rebates. Built with Gemini AI, Google Vision, Supabase, and Vercel."
        data-bubble-offset="96"
        data-bubble-position="right"
        data-bubble-offset-x="-10"
        data-bubble-offset-y="-24"
-       data-preview-url="images/previews/godo-preview.png"
-       data-link="https://github.com/tor-iv/godo">
+       data-bubble-width="360"
+       data-bubble-height="200"
+       data-link="https://trykeepersheart.com">
       <image href="images/green-vase.png" x="400" y="349" width="242" height="363"/>
     </g>
 
@@ -497,27 +498,27 @@
     </g>
 
     <!-- Tomato Jar -->
-    <g id="vase-tomato" class="vase" tabindex="0" role="button" aria-label="Tomato Jar" aria-expanded="false"
-       data-title="Tor-Chinese"
-       data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
+    <g id="vase-tomato" class="vase" tabindex="0" role="button" aria-label="FoeFinder" aria-expanded="false"
+       data-title="Foe Finder"
+       data-body="Tired of dating apps finding your match? FoeFinder does the opposite—take a quiz and get paired once a year with your greatest rival."
        data-bubble-offset="40"
-       data-bubble-width="360"
-       data-bubble-height="320"
-       data-bubble-layout="stacked"
-       data-preview-url="images/previews/hanzi-a-day.png"
-       data-link="https://hanzi-a-day.vercel.app/">
+       data-bubble-width="280"
+       data-bubble-height="160"
+       data-link="https://foefinder.me">
       <image href="images/tomato.png" x="777" y="555" width="157" height="157"/>
     </g>
 
     <!-- Owl (Fnoobie) -->
-    <g id="vase-owl" class="vase" tabindex="0" role="button" aria-label="FoeFinder" aria-expanded="false"
-       data-title="Foe Finder"
-       data-body="Tired of dating apps finding your match? FoeFinder does the opposite—take a quiz and get paired once a year with your greatest rival."
+    <g id="vase-owl" class="vase" tabindex="0" role="button" aria-label="Hanzi a Day" aria-expanded="false"
+       data-title="Hanzi a Day"
+       data-body="Simple app to learn one character a day, breaking hanzi into visual parts."
        data-bubble-offset="56"
+       data-bubble-width="360"
+       data-bubble-height="320"
        data-bubble-position="left"
-       data-bubble-width="280"
-       data-bubble-height="160"
-       data-link="https://foefinder.me">
+       data-bubble-layout="stacked"
+       data-preview-url="images/previews/hanzi-a-day.png"
+       data-link="https://hanzi-a-day.vercel.app/">
       <image href="images/fnoobie.png" x="1351" y="525" width="126" height="189" transform="rotate(-5 1414 613.5)"/>
     </g>
 
@@ -532,15 +533,17 @@
       <image href="images/multicolor-vase.png" x="239" y="783" width="161" height="241"/>
     </g>
 
-    <!-- Burn Jameson Whiskey Campaign -->
-    <g id="vase-flower" class="vase" tabindex="0" role="button" aria-label="Burn Jameson" aria-expanded="false"
-       data-title="Try Keeper's Heart"
-       data-body="A marketing campaign for Keeper's Heart Whiskey allowing users to 'burn' the competition—scan competitor bottles, verify receipts, and receive PayPal rebates. Built with Gemini AI, Google Vision, Supabase, and Vercel."
+    <!-- GoDo App -->
+    <g id="vase-flower" class="vase" tabindex="0" role="button" aria-label="GoDo" aria-expanded="false"
+       data-title="GoDo"
+       data-body="GoDo solves the problem of sitting around wondering what to do by presenting swipeable activity recommendations that get you off the couch, then holds you accountable by automatically adding chosen events to your calendar."
        data-bubble-offset="56"
        data-bubble-width="360"
-       data-bubble-height="200"
+       data-bubble-height="320"
        data-bubble-position="right"
-       data-link="https://trykeepersheart.com">
+       data-bubble-layout="stacked"
+       data-preview-url="images/previews/godo-preview.png"
+       data-link="https://github.com/tor-iv/godo">
       <image href="images/white-flower.png" x="30.9" y="515" width="90" height="139" transform="rotate(-6 74.9 577.97)"/>
     </g>
 
@@ -862,26 +865,66 @@
       const bodyEl = contentNode.querySelector('.body');
 
       if (bubbleLayout === 'stacked') {
-        const pointerHeight = 20;
+        const pointerWidth = 20;
         const widthVal = parseFloat(bubbleWidth || '320');
         const heightVal = parseFloat(bubbleHeight || '320');
         const effectiveWidth = Math.max(widthVal, 300);
         stackedEffectiveHeight = Math.max(heightVal, 280);
-        const rectX = -effectiveWidth / 2;
-        const rectY = -(stackedEffectiveHeight + pointerHeight + 4);
 
-        rect.setAttribute('x', rectX);
-        rect.setAttribute('y', rectY);
-        rect.setAttribute('width', effectiveWidth);
-        rect.setAttribute('height', stackedEffectiveHeight);
+        if (position === 'left') {
+          // Bubble to the LEFT of vase, tail points RIGHT
+          const rectX = -(effectiveWidth + pointerWidth + 4);
+          const rectY = -stackedEffectiveHeight / 2;
 
-        foreignObject.setAttribute('x', rectX + 12);
-        foreignObject.setAttribute('y', rectY + 12);
-        foreignObject.setAttribute('width', effectiveWidth - 24);
-        foreignObject.setAttribute('height', stackedEffectiveHeight - 24);
+          rect.setAttribute('x', rectX);
+          rect.setAttribute('y', rectY);
+          rect.setAttribute('width', effectiveWidth);
+          rect.setAttribute('height', stackedEffectiveHeight);
 
-        tail.setAttribute('d', `M 0 ${pointerHeight} L -18 0 L 18 0 Z`);
-        tail.setAttribute('transform', `translate(0, ${rectY + stackedEffectiveHeight})`);
+          foreignObject.setAttribute('x', rectX + 12);
+          foreignObject.setAttribute('y', rectY + 12);
+          foreignObject.setAttribute('width', effectiveWidth - 24);
+          foreignObject.setAttribute('height', stackedEffectiveHeight - 24);
+
+          // Tail pointing right
+          tail.setAttribute('d', 'M 0 0 L -20 -18 L -20 18 Z');
+          tail.removeAttribute('transform');
+        } else if (position === 'right') {
+          // Bubble to the RIGHT of vase, tail points LEFT
+          const rectX = pointerWidth + 4;
+          const rectY = -stackedEffectiveHeight / 2;
+
+          rect.setAttribute('x', rectX);
+          rect.setAttribute('y', rectY);
+          rect.setAttribute('width', effectiveWidth);
+          rect.setAttribute('height', stackedEffectiveHeight);
+
+          foreignObject.setAttribute('x', rectX + 12);
+          foreignObject.setAttribute('y', rectY + 12);
+          foreignObject.setAttribute('width', effectiveWidth - 24);
+          foreignObject.setAttribute('height', stackedEffectiveHeight - 24);
+
+          // Tail pointing left
+          tail.setAttribute('d', 'M 0 0 L 20 -18 L 20 18 Z');
+          tail.removeAttribute('transform');
+        } else {
+          // Default: bubble ABOVE vase, tail points DOWN
+          const rectX = -effectiveWidth / 2;
+          const rectY = -(stackedEffectiveHeight + pointerWidth + 4);
+
+          rect.setAttribute('x', rectX);
+          rect.setAttribute('y', rectY);
+          rect.setAttribute('width', effectiveWidth);
+          rect.setAttribute('height', stackedEffectiveHeight);
+
+          foreignObject.setAttribute('x', rectX + 12);
+          foreignObject.setAttribute('y', rectY + 12);
+          foreignObject.setAttribute('width', effectiveWidth - 24);
+          foreignObject.setAttribute('height', stackedEffectiveHeight - 24);
+
+          tail.setAttribute('d', `M 0 ${pointerWidth} L -18 0 L 18 0 Z`);
+          tail.setAttribute('transform', `translate(0, ${rectY + stackedEffectiveHeight})`);
+        }
 
         if (titleEl) titleEl.style.fontSize = '20px';
         if (bodyEl) {
