@@ -26,11 +26,16 @@
     .stage-wrap {
       position: relative;
       width: 100vw;
+      min-height: 100vh;
+      min-height: 100dvh; /* dynamic viewport height for mobile browsers */
       margin: 0 auto;
       overflow-x: auto;
       overflow-y: auto;
       scroll-behavior: smooth;
       cursor: url('images/cursor-grab.svg') 16 16, grab;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .stage-wrap:active { cursor: url('images/cursor-grabbing.svg') 16 16, grabbing; }
     .stage {
@@ -56,7 +61,10 @@
         overflow-y: auto;
         cursor: default;
         min-height: 100vh;
-        display: block;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .stage-wrap:active { cursor: default; }
       .stage {
